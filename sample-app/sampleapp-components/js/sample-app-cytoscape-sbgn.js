@@ -1,6 +1,6 @@
 //Override String endsWith method for IE
-String.prototype.endsWith = function(suffix) {
-    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+String.prototype.endsWith = function (suffix) {
+  return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
 function dynamicResize()
@@ -761,6 +761,87 @@ var getSBGNStyleRules = function () {
   return sbgnStyleRules;
 };
 
+var getCyShape = function(ele){
+  var sbgnclass = ele.data('sbgnclass');
+  if(sbgnclass == 'macromolecule' || sbgnclass == 'compartment'){
+    return 'roundrectangle';
+  }
+  if(sbgnclass == 'complex'){
+    return 'octagon';
+  }
+  if(sbgnclass == 'simple chemical' || sbgnclass == 'association' || sbgnclass == 'dissociation' 
+          || sbgnclass == 'unspecified entity'){
+    return 'ellipse';
+  }
+  if(sbgnclass == 'process' || sbgnclass == 'omitted process' || sbgnclass == 'uncertain process'){
+    return 'rectangle';
+  }
+  if(sbgnclass == 'phenotype'){
+    return 'hexagon';
+  }
+  if(sbgnclass == 'perturbing agent' || sbgnclass == 'tag'){
+    return 'polygon';
+  }
+  return 'ellipse';
+};
+
+var getElementContent = function(ele){
+  var sbgnclass = ele.data('sbgnclass');
+  if(sbgnclass == 'macromolecule' || sbgnclass == 'simple chemical'
+          || sbgnclass == 'phenotype' || sbgnclass == 'compartment'
+          || sbgnclass == 'unspecified entity' || sbgnclass == 'nucleic acid feature'
+          || sbgnclass == 'perturbing agent' || sbgnclass == 'tag'){
+    return ele.data('sbgnlabel')?ele.data('sbgnlabel'):"";
+  }
+  if(sbgnclass == 'and'){
+    return 'AND';
+  }
+  if(sbgnclass == 'or'){
+    return 'OR';
+  }
+  if(sbgnclass == 'not'){
+    return 'NOT';
+  }
+  if(sbgnclass == 'omitted process'){
+    return '\\\\';
+  }
+  if(sbgnclass == 'uncertain process'){
+    return '?';
+  }
+  if(sbgnclass == 'dissociation'){
+    return 'O';
+  }
+};
+
+/*
+ * calculates the dynamic label size for the given node
+ */
+var getDynamicLabelTextSize = function (ele) {
+  if (window.dynamicLabelSize == null) {
+    window.dynamicLabelSize = sbgnStyleRules['dynamic-label-size'];
+  }
+
+  var dynamicLabelSizeCoefficient;
+
+  if (dynamicLabelSize == 'small') {
+    dynamicLabelSizeCoefficient = 0.75;
+  }
+  else if (dynamicLabelSize == 'regular') {
+    dynamicLabelSizeCoefficient = 1;
+  }
+  else if (dynamicLabelSize == 'large') {
+    dynamicLabelSizeCoefficient = 1.25;
+  }
+  
+  //This line will be useless and is to be removed later
+  dynamicLabelSizeCoefficient = dynamicLabelSizeCoefficient?dynamicLabelSizeCoefficient:1;
+  
+  var h = ele.data('height')?ele.data('height'):ele.data('sbgnbbox').h;
+  var textHeight = parseInt(h) / 2.45 * dynamicLabelSizeCoefficient;
+  
+  return textHeight;
+};
+
 var sbgnStyleSheet = cytoscape.stylesheet()
         .selector("node")
         .css({
@@ -771,15 +852,55 @@ var sbgnStyleSheet = cytoscape.stylesheet()
 //          'shape': 'data(sbgnclass)',
           'background-opacity': 0.5,
         })
+        .selector("node[sbgnclass][sbgnclass!='complex'][sbgnclass!='process'][sbgnclass!='association'][sbgnclass!='dissociation'][sbgnclass!='compartment'][sbgnclass!='source and sink']")
+        .css({
+//          'content': 'data(sbgnlabel)',
+          'content': function(ele){
+            return getElementContent(ele);
+          },
+          'text-valign': 'center',
+          'text-halign': 'center',
+          'font-size': function(ele){
+            return getDynamicLabelTextSize(ele);
+          }
+        })
+        .selector("node[sbgnclass='dissociation']")
+        .css({
+//          'content': 'data(sbgnlabel)',
+          'content': function(ele){
+            return getElementContent(ele);
+          },
+          'text-valign': 'center',
+          'text-halign': 'center',
+          'font-size': function(ele){
+            var h = ele.data('height')?ele.data('height'):ele.data('sbgnbbox').h;
+            return h * 0.8;
+          },
+          'font-style': 'normal',
+          'font-weight': 'normal',
+          'text-background-color': function(ele){
+            return ele.css('border-color');
+          },
+          'text-opacity': '0.5'
+        })
         .selector("node[sbgnclass]")
         .css({
-          'shape': 'data(sbgnclass)'
+          'shape': function(ele){
+            return getCyShape(ele);
+          }
         })
-//        .selector("node[!sbgnclass][width][height]")
-//        .css({
-//          'width': 'data(width)',
-//          'height': 'data(height)'
-//        })
+        .selector("node[sbgnclass='perturbing agent']")
+        .css({
+          'shape-polygon-points': '-1, -1,   -0.5, 0,  -1, 1,   1, 1,   0.5, 0, 1, -1'
+        })
+        .selector("node[sbgnclass='association']")
+        .css({
+          'background-color': '#6B6B6B'
+        })
+        .selector("node[sbgnclass='tag']")
+        .css({
+          'shape-polygon-points': '-1, -1,   0.25, -1,   1, 0,    0.25, 1,    -1, 1'
+        })
         .selector("node[sbgnclass='complex']")
         .css({
           'background-color': '#F4F3EE',
@@ -828,10 +949,10 @@ var sbgnStyleSheet = cytoscape.stylesheet()
           'source-arrow-color': '#555',
 //          'target-arrow-shape': 'data(sbgnclass)'
         })
-        .selector("edge[sbgnclass]")
-        .css({
-          'target-arrow-shape': 'data(sbgnclass)'
-        })
+//        .selector("edge[sbgnclass]")
+//        .css({
+//          'target-arrow-shape': 'data(sbgnclass)'
+//        })
         .selector("edge[sbgnclass='inhibition']")
         .css({
           'target-arrow-fill': 'filled'
@@ -839,7 +960,7 @@ var sbgnStyleSheet = cytoscape.stylesheet()
         .selector("edge[sbgnclass='consumption']")
         .css({
           'target-arrow-shape': 'none',
-          'source-arrow-shape': 'data(sbgnclass)',
+          'source-arrow-shape': 'consumption',
           'line-style': 'consumption'
         })
         .selector("edge[sbgnclass='production']")
@@ -1143,21 +1264,21 @@ var SBGNContainer = Backbone.View.extend({
             var nodesData = getNodesData();
             nodesData.firstTime = true;
             var newParent;
-            if(self != cy){
+            if (self != cy) {
               newParent = self;
             }
             var node = window.nodeToDragAndDrop;
-            
-            if(newParent && self.data("sbgnclass") != "complex" && self.data("sbgnclass") != "compartment"){
+
+            if (newParent && self.data("sbgnclass") != "complex" && self.data("sbgnclass") != "compartment") {
               return;
             }
-            
-            if(newParent && self.data("sbgnclass") == "complex" && !isEPNClass(node.data("sbgnclass"))){
+
+            if (newParent && self.data("sbgnclass") == "complex" && !isEPNClass(node.data("sbgnclass"))) {
               return;
             }
-            
+
             disableDragAndDropMode();
-            if(node.parent()[0] == newParent || node._private.data.parent == node.id()){
+            if (node.parent()[0] == newParent || node._private.data.parent == node.id()) {
               return;
             }
             var param = {
@@ -1172,7 +1293,7 @@ var SBGNContainer = Backbone.View.extend({
         });
 
         cy.on("mouseup", "node", function () {
-          if(window.dragAndDropModeEnabled){
+          if (window.dragAndDropModeEnabled) {
             return;
           }
           if (lastMouseDownNodeInfo == null) {
