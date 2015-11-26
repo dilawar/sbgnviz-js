@@ -785,6 +785,26 @@ var getCyShape = function(ele){
   return 'ellipse';
 };
 
+var getCyArrowShape = function(ele){
+  var sbgnclass = ele.data('sbgnclass');
+  if(sbgnclass == 'necessary stimulation'){
+    return 'triangle-tee';
+  }
+  if(sbgnclass == 'inhibition'){
+    return 'tee';
+  }
+  if(sbgnclass == 'catalysis'){
+    return 'circle';
+  }
+  if(sbgnclass == 'stimulation' || sbgnclass == 'production'){
+    return 'triangle';
+  }
+  if(sbgnclass == 'modulation'){
+    return 'diamond';
+  }
+  return 'none';
+};
+
 var getElementContent = function(ele){
   var sbgnclass = ele.data('sbgnclass');
   if(sbgnclass == 'macromolecule' || sbgnclass == 'simple chemical'
@@ -949,10 +969,12 @@ var sbgnStyleSheet = cytoscape.stylesheet()
           'source-arrow-color': '#555',
 //          'target-arrow-shape': 'data(sbgnclass)'
         })
-//        .selector("edge[sbgnclass]")
-//        .css({
-//          'target-arrow-shape': 'data(sbgnclass)'
-//        })
+        .selector("edge[sbgnclass]")
+        .css({
+          'target-arrow-shape': function(ele){
+            return getCyArrowShape(ele);
+          }
+        })
         .selector("edge[sbgnclass='inhibition']")
         .css({
           'target-arrow-fill': 'filled'
