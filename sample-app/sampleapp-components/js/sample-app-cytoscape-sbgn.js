@@ -865,8 +865,16 @@ var getElementContent = function (ele) {
     width: ele.data('width') ? ele.data('width') : ele.data('sbgnbbox').w
   };
 
-  var font = getDynamicLabelTextSize(ele) + "px Arial";;
+  var font = getLabelTextSize(ele) + "px Arial";
   return truncateText(textProp, font);
+};
+
+var getLabelTextSize = function(ele){
+  var sbgnclass = ele.data('sbgnclass');
+  if(sbgnclass.endsWith('process')){
+    return 18;
+  }
+  return getDynamicLabelTextSize(ele);
 };
 
 /*
@@ -917,7 +925,7 @@ var sbgnStyleSheet = cytoscape.stylesheet()
           'text-valign': 'center',
           'text-halign': 'center',
           'font-size': function (ele) {
-            return getDynamicLabelTextSize(ele);
+            return getLabelTextSize(ele);
           }
         })
         .selector("node[sbgnclass='dissociation']")
@@ -1103,7 +1111,7 @@ var sbgnStyleSheet = cytoscape.stylesheet()
         .selector("node.changeLabelTextSize")
         .css({
           'font-size': function (ele) {
-            return getDynamicLabelTextSize(ele);
+            return getLabelTextSize(ele);
           }
         })
         .selector("node.changeContent")
