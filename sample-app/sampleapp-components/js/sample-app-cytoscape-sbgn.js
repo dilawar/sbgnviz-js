@@ -805,8 +805,9 @@ var getCyArrowShape = function (ele) {
   return 'none';
 };
 
-var truncateText = function (textProp) {
+var truncateText = function (textProp, font) {
   var context = document.createElement('canvas').getContext("2d");
+  context.font = font;
   //If fit labels to nodes is not set yet set it by css value
   if (window.fitLabelsToNodes == null) {
     window.fitLabelsToNodes = (sbgnStyleRules['fit-labels-to-nodes'] == 'true');
@@ -864,7 +865,8 @@ var getElementContent = function (ele) {
     width: ele.data('width') ? ele.data('width') : ele.data('sbgnbbox').w
   };
 
-  return truncateText(textProp);
+  var font = getDynamicLabelTextSize(ele) + "px Arial";;
+  return truncateText(textProp, font);
 };
 
 /*
