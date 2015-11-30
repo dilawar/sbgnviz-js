@@ -928,25 +928,25 @@ var sbgnStyleSheet = cytoscape.stylesheet()
             return getLabelTextSize(ele);
           }
         })
-        .selector("node[sbgnclass='dissociation']")
-        .css({
-//          'content': 'data(sbgnlabel)',
-          'content': function (ele) {
-            return getElementContent(ele);
-          },
-          'text-valign': 'center',
-          'text-halign': 'center',
-          'font-size': function (ele) {
-            var h = ele.data('height') ? ele.data('height') : ele.data('sbgnbbox').h;
-            return h * 0.8;
-          },
-          'font-style': 'normal',
-          'font-weight': 'normal',
-          'text-background-color': function (ele) {
-            return ele.css('border-color');
-          },
-          'text-opacity': '0.5'
-        })
+//        .selector("node[sbgnclass='dissociation']")
+//        .css({
+////          'content': 'data(sbgnlabel)',
+//          'content': function (ele) {
+//            return getElementContent(ele);
+//          },
+//          'text-valign': 'center',
+//          'text-halign': 'center',
+//          'font-size': function (ele) {
+//            var h = ele.data('height') ? ele.data('height') : ele.data('sbgnbbox').h;
+//            return h * 0.8;
+//          },
+//          'font-style': 'normal',
+//          'font-weight': 'normal',
+//          'text-background-color': function (ele) {
+//            return ele.css('border-color');
+//          },
+//          'text-opacity': '0.5'
+//        })
         .selector("node[sbgnclass]")
         .css({
           'shape': function (ele) {
@@ -1026,7 +1026,7 @@ var sbgnStyleSheet = cytoscape.stylesheet()
         .selector("edge[sbgnclass='consumption']")
         .css({
           'text-background-opacity': 1,
-          'text-background-color': '#ccc',
+          'text-background-color': 'white',
           'text-background-shape': 'roundrectangle',
           'text-border-color': '#000',
           'text-border-width': 1,
