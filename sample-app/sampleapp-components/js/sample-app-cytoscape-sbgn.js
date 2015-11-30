@@ -1777,12 +1777,14 @@ var SBGNProperties = Backbone.View.extend({
       if (dynamicLabelSize != self.currentSBGNProperties.dynamicLabelSize) {
         dynamicLabelSize = self.currentSBGNProperties.dynamicLabelSize;
         cy.forceRender();
+        cy.nodes().removeClass('changeLabelTextSize');
         cy.nodes().addClass('changeLabelTextSize');
       }
       //Refresh truncations if needed
       if (fitLabelsToNodes != self.currentSBGNProperties.fitLabelsToNodes) {
         fitLabelsToNodes = self.currentSBGNProperties.fitLabelsToNodes;
         cy.forceRender();
+        cy.nodes().removeClass('changeContent');
         cy.nodes().addClass('changeContent');
       }
 

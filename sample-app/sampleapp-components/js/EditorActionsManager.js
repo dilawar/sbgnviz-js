@@ -419,10 +419,10 @@ function changeParent(param) {
   //If there is an inner param firstly call the function with it
   //Inner param is created if the change parent operation requires 
   //another change parent operation in it.
-  if(param.innerParam){
+  if (param.innerParam) {
     changeParent(param.innerParam);
   }
-  
+
   var node = param.node;
   var oldParentId = node._private.data.parent;
   var oldParent = node.parent()[0];
@@ -466,14 +466,14 @@ function changeParent(param) {
 
   //Change the parent of the node
   addRemoveUtilities.changeParent(node, oldParentId, newParent ? newParent._private.data.id : undefined);
-  
-  if(param.posX && param.posY){
+
+  if (param.posX && param.posY) {
     node.position({
       x: param.posX,
       y: param.posY
     });
   }
-  
+
   cy.nodes().updateCompoundBounds();
   returnToPositionsAndSizesConditionally(nodesData);
 
@@ -558,7 +558,9 @@ function changeNodeLabel(param) {
   result.sbgnlabel = node._private.data.sbgnlabel;
 
   node._private.data.sbgnlabel = param.sbgnlabel;
-  cy.forceRender();
+  
+  node.removeClass('changeContent');
+  node.addClass('changeContent');
 
   if (cy.elements(":selected").length == 1 && cy.elements(":selected")[0] == param.node) {
     handleSBGNInspector();
