@@ -654,10 +654,7 @@ var refreshUndoRedoButtonsStatus = function () {
 }
 
 var refreshPaddings = function () {
-  //If compound padding is not set yet set it by css value
-  if (window.compoundPadding == null) {
-    window.compoundPadding = parseInt(sbgnStyleRules['compound-padding'], 10);
-  }
+  var compoundPadding = parseInt(sbgnStyleRules['compound-padding'], 10);
   var nodes = cy.nodes();
   var total = 0;
   var numOfSimples = 0;
@@ -736,31 +733,6 @@ var printNodeInfo = function () {
   }
 };
 
-//get the style properties for the given selector
-var getStyleRules = function (selector) {
-  for (var i = 0; i < sbgnStyleSheet.length; i++) {
-    var currentStyle = sbgnStyleSheet[i];
-    if (currentStyle.selector == selector) {
-      return currentStyle.properties;
-    }
-  }
-};
-
-/*
- * get the style rules for .sbgn selector and fill them into sbgnStyleRules map
- */
-var getSBGNStyleRules = function () {
-  if (window.sbgnStyleRules == null) {
-    var styleRulesList = getStyleRules(".sbgn");
-    window.sbgnStyleRules = {};
-    for (var i = 0; i < styleRulesList.length; i++) {
-      var rule = styleRulesList[i];
-      window.sbgnStyleRules[rule.name] = rule.value;
-    }
-  }
-  return sbgnStyleRules;
-};
-
 var getCyShape = function (ele) {
   var sbgnclass = ele.data('sbgnclass');
   if (sbgnclass == 'macromolecule' || sbgnclass == 'compartment') {
@@ -808,13 +780,11 @@ var getCyArrowShape = function (ele) {
 var truncateText = function (textProp, font) {
   var context = document.createElement('canvas').getContext("2d");
   context.font = font;
-  //If fit labels to nodes is not set yet set it by css value
-  if (window.fitLabelsToNodes == null) {
-    window.fitLabelsToNodes = (sbgnStyleRules['fit-labels-to-nodes'] == 'true');
-  }
+  var fitLabelsToNodes = (sbgnStyleRules['fit-labels-to-nodes'] == 'true');
+  
   var text = (typeof textProp.label === 'undefined') ? "" : textProp.label;
   //If fit labels to nodes is false do not truncate
-  if (window.fitLabelsToNodes == false) {
+  if (fitLabelsToNodes == false) {
     return text;
   }
   var width;
@@ -881,10 +851,7 @@ var getLabelTextSize = function(ele){
  * calculates the dynamic label size for the given node
  */
 var getDynamicLabelTextSize = function (ele) {
-  if (window.dynamicLabelSize == null) {
-    window.dynamicLabelSize = sbgnStyleRules['dynamic-label-size'];
-  }
-
+  var dynamicLabelSize = sbgnStyleRules['dynamic-label-size'];
   var dynamicLabelSizeCoefficient;
 
   if (dynamicLabelSize == 'small') {
@@ -968,7 +935,6 @@ var sbgnStyleSheet = cytoscape.stylesheet()
         .selector("node[sbgnclass='complex']")
         .css({
           'background-color': '#F4F3EE',
-          'expanded-collapsed': 'expanded',
           'text-valign': 'bottom',
           'text-halign': 'center',
           'font-size': '16'
@@ -981,12 +947,7 @@ var sbgnStyleSheet = cytoscape.stylesheet()
           'content': 'data(sbgnlabel)',
           'text-valign': 'bottom',
           'text-halign': 'center',
-          'font-size': '16',
-          'expanded-collapsed': 'expanded'
-        })
-        .selector("node[sbgnclass='submap']")
-        .css({
-          'expanded-collapsed': 'expanded'
+          'font-size': '16'
         })
         .selector("node[sbgnclass][sbgnclass!='complex'][sbgnclass!='compartment'][sbgnclass!='submap']")
         .css({
@@ -1151,17 +1112,8 @@ var sbgnStyleSheet = cytoscape.stylesheet()
           'line-color': '#d67614',
           'source-arrow-color': '#d67614',
           'target-arrow-color': '#d67614'
-        })
-        .selector(".sbgn")
-        .css({
-          'compound-padding': 20,
-          'dynamic-label-size': 'regular',
-          'fit-labels-to-nodes': 'true',
-          'incremental-layout-after-expand-collapse': 'true'
-        }); // end of sbgnStyleSheet
-
-//get the sbgn style rules
-getSBGNStyleRules();
+        }); 
+        // end of sbgnStyleSheet
 
 var NotyView = Backbone.View.extend({
   render: function () {
@@ -1215,6 +1167,8 @@ var SBGNContainer = Backbone.View.extend({
 
         refreshPaddings();
         initilizeUnselectedDataOfElements();
+
+        cy.nodes('[sbgnclass="complex"],[sbgnclass="compartment"],[sbgnclass="submap"]').data('expanded-collapsed', 'expanded');
 
         cy.noderesize({
           handleColor: '#000000', // the colour of the handle and the line drawn from it
@@ -1624,12 +1578,10 @@ var SBGNContainer = Backbone.View.extend({
                   && cyPosY <= node._private.data.expandcollapseEndY) {
             selectAgain = cy.filter(":selected");
             cancelSelection = true;
-            var expandedOrcollapsed = this.css('expanded-collapsed');
+            var expandedOrcollapsed = this.data('expanded-collapsed');
 
-            if (window.incrementalLayoutAfterExpandCollapse == null) {
-              window.incrementalLayoutAfterExpandCollapse =
+            var incrementalLayoutAfterExpandCollapse =
                       (sbgnStyleRules['incremental-layout-after-expand-collapse'] == 'true');
-            }
 
             if (expandedOrcollapsed == 'expanded') {
 //              expandCollapseUtilities.collapseNode(this);
@@ -1779,25 +1731,25 @@ var SBGNProperties = Backbone.View.extend({
               document.getElementById("incremental-layout-after-expand-collapse").checked;
 
       //Refresh paddings if needed
-      if (compoundPadding != self.currentSBGNProperties.compoundPadding) {
-        compoundPadding = self.currentSBGNProperties.compoundPadding;
+      if (sbgnStyleRules['compound-padding'] != self.currentSBGNProperties.compoundPadding) {
+        sbgnStyleRules['compound-padding'] = self.currentSBGNProperties.compoundPadding;
         refreshPaddings();
       }
       //Refresh label size if needed
-      if (dynamicLabelSize != self.currentSBGNProperties.dynamicLabelSize) {
-        dynamicLabelSize = self.currentSBGNProperties.dynamicLabelSize;
+      if (sbgnStyleRules['dynamic-label-size'] != self.currentSBGNProperties.dynamicLabelSize) {
+        sbgnStyleRules['dynamic-label-size'] = '' + self.currentSBGNProperties.dynamicLabelSize;
         cy.nodes().removeClass('changeLabelTextSize');
         cy.nodes().addClass('changeLabelTextSize');
       }
       //Refresh truncations if needed
-      if (fitLabelsToNodes != self.currentSBGNProperties.fitLabelsToNodes) {
-        fitLabelsToNodes = self.currentSBGNProperties.fitLabelsToNodes;
+      if (sbgnStyleRules['fit-labels-to-nodes'] != self.currentSBGNProperties.fitLabelsToNodes) {
+        sbgnStyleRules['fit-labels-to-nodes'] = '' + self.currentSBGNProperties.fitLabelsToNodes;
         cy.nodes().removeClass('changeContent');
         cy.nodes().addClass('changeContent');
       }
 
-      window.incrementalLayoutAfterExpandCollapse =
-              self.currentSBGNProperties.incrementalLayoutAfterExpandCollapse;
+      sbgnStyleRules['incremental-layout-after-expand-collapse'] =
+              '' + self.currentSBGNProperties.incrementalLayoutAfterExpandCollapse;
 
       $(self.el).dialog('close');
     });

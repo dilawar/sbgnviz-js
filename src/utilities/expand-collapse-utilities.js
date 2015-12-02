@@ -6,7 +6,7 @@ var expandCollapseUtilities = {
   //Some nodes are initilized as collapsed this method handles them
   initCollapsedNodes: function () {
     var nodesToCollapse = cy.nodes().filter(function (i, ele) {
-      if (ele.css()['expanded-collapsed'] != null && ele.css('expanded-collapsed') == 'collapsed') {
+      if (ele.data('expanded-collapsed') == 'collapsed') {
         return true;
       }
     });
@@ -132,9 +132,6 @@ var expandCollapseUtilities = {
       this.collapseBottomUp(node);
     }
     //If the root is a compound node to be collapsed then collapse it
-//    if ((root.children().length > 0 || root._private.data.collapsedChildren != null)
-//            && root.css()['expanded-collapsed'] != null
-//            && root.css('expanded-collapsed') == 'collapsed') 
     if (root.data("collapse") && root.children().length > 0)
     {
       this.simpleCollapseNode(root);
@@ -177,7 +174,7 @@ var expandCollapseUtilities = {
   simpleExpandNode: function (node) {
     if (node._private.data.collapsedChildren != null) {
       node.removeData("infoLabel");
-      node.css('expanded-collapsed', 'expanded');
+      node.data('expanded-collapsed', 'expanded');
       node._private.data.collapsedChildren.restore();
       this.repairEdgesOfCollapsedChildren(node);
       node._private.data.collapsedChildren = null;
@@ -200,7 +197,7 @@ var expandCollapseUtilities = {
       node.children().unselect();
       node.children().connectedEdges().unselect();
 
-      node.css('expanded-collapsed', 'collapsed');
+      node.data('expanded-collapsed', 'collapsed');
 
       var children = node.children();
 
