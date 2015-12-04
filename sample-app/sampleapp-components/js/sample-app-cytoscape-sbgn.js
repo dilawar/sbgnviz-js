@@ -754,9 +754,9 @@ var getCyShape = function (ele) {
   if (sbgnclass == 'perturbing agent' || sbgnclass == 'tag') {
     return 'polygon';
   }
-//  if(sbgnclass == 'source and sink'){
-//    return 'source and sink'; 
-//  }
+  if(sbgnclass == 'source and sink'){
+    return 'source and sink'; 
+  }
   return 'ellipse';
 };
 
