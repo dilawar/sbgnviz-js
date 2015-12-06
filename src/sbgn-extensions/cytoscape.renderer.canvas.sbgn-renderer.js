@@ -1,14 +1,97 @@
 (function ($$) {
     var sbgnShapes = $$.sbgnShapes = {
-        'source and sink': true
+        'source and sink': true,
+        'nucleic acid feature': true
     };
 
     $$.sbgn = {
     };
 
+    $$.sbgn.drawNucAcidFeature = function (context, width, height,
+            centerX, centerY, cornerRadius) {
+        var halfWidth = width / 2;
+        var halfHeight = height / 2;
+
+        context.translate(centerX, centerY);
+        context.beginPath();
+
+        context.moveTo(-halfWidth, -halfHeight);
+        context.lineTo(halfWidth, -halfHeight);
+        context.lineTo(halfWidth, 0);
+        context.arcTo(halfWidth, halfHeight, 0, halfHeight, cornerRadius);
+        context.arcTo(-halfWidth, halfHeight, -halfWidth, 0, cornerRadius);
+        context.lineTo(-halfWidth, -halfHeight);
+
+        context.closePath();
+        context.translate(-centerX, -centerY);
+        context.fill();
+    };
+
+    $$.sbgn.isMultimer = function (node) {
+        var sbgnClass = node._private.data.sbgnclass;
+        if (sbgnClass.indexOf("multimer") != -1)
+            return true;
+        return false;
+    };
+
     window.cyStyfn.types.nodeShape.enums.push('source and sink');
+    window.cyStyfn.types.nodeShape.enums.push('nucleic acid feature');
 
     $$.sbgn.registerSbgnShapes = function () {
+        window.cyNodeShapes["nucleic acid feature"] = {
+            points: window.cyMath.generateUnitNgonPointsFitToSquare(4, 0),
+            multimerPadding: 5,
+            draw: function (context, node) {
+                var centerX = node._private.position.x;
+                var centerY = node._private.position.y;
+                ;
+                var width = node.width();
+                var height = node.height();
+                var label = node._private.data.sbgnlabel;
+                var cornerRadius = window.cyMath.getRoundRectangleRadius(width, height);
+                var multimerPadding = window.cyNodeShapes["nucleic acid feature"].multimerPadding;
+                var cloneMarker = node._private.data.sbgnclonemarker;
+
+                //check whether sbgn class includes multimer substring or not
+                if ($$.sbgn.isMultimer(node)) {
+                    //add multimer shape
+                    $$.sbgn.drawNucAcidFeature(context, width, height,
+                            centerX + multimerPadding,
+                            centerY + multimerPadding, cornerRadius);
+
+                    context.stroke();
+
+                    $$.sbgn.cloneMarker.nucleicAcidFeature(context,
+                            centerX + multimerPadding, centerY + multimerPadding,
+                            width, height, cloneMarker, true,
+                            node._private.style['background-opacity'].value);
+
+                    //context.stroke();
+                }
+
+                $$.sbgn.drawNucAcidFeature(context, width, height, centerX,
+                        centerY, cornerRadius);
+
+                context.stroke();
+
+                $$.sbgn.cloneMarker.nucleicAcidFeature(context, centerX, centerY,
+                        width, height, cloneMarker, false,
+                        node._private.style['background-opacity'].value);
+
+//                var nodeProp = {'label': label, 'centerX': centerX, 'centerY': centerY,
+//                    'opacity': node._private.style['text-opacity'].value, 'width': node.width(), 'height': node.height()};
+//
+//                $$.sbgn.drawDynamicLabelText(context, nodeProp);
+//                $$.sbgn.forceOpacityToOne(node, context);
+//                $$.sbgn.drawStateAndInfos(node, context, centerX, centerY);
+            },
+            drawPath: function (context, node) {
+
+            },
+            intersectLine: window.cyNodeShapes["roundrectangle"].intersectLine,
+            intersectBox: window.cyNodeShapes["roundrectangle"].intersectBox,
+            checkPoint: window.cyNodeShapes["roundrectangle"].checkPoint
+        };
         window.cyNodeShapes["source and sink"] = {
             points: window.cyMath.generateUnitNgonPoints(4, 0),
             draw: function (context, node) {
