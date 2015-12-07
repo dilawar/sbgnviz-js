@@ -734,28 +734,32 @@ var printNodeInfo = function () {
 };
 
 var getCyShape = function (ele) {
-  var sbgnclass = ele.data('sbgnclass');
-  if (sbgnclass == 'macromolecule' || sbgnclass == 'compartment') {
+  var shape = ele.data('sbgnclass');
+  if(shape.endsWith(' multimer')){
+    shape = shape.replace(' multimer', '');
+  }
+  
+  if (shape == 'macromolecule' || shape == 'compartment') {
     return 'roundrectangle';
   }
-  if (sbgnclass == 'complex') {
+  if (shape == 'complex') {
     return 'octagon';
   }
-  if (sbgnclass == 'simple chemical' || sbgnclass == 'association' || sbgnclass == 'dissociation'
-          || sbgnclass == 'unspecified entity') {
+  if (shape == 'simple chemical' || shape == 'association' || shape == 'dissociation'
+          || shape == 'unspecified entity') {
     return 'ellipse';
   }
-  if (sbgnclass == 'process' || sbgnclass == 'omitted process' || sbgnclass == 'uncertain process') {
+  if (shape == 'process' || shape == 'omitted process' || shape == 'uncertain process') {
     return 'rectangle';
   }
-  if (sbgnclass == 'phenotype') {
+  if (shape == 'phenotype') {
     return 'hexagon';
   }
-  if (sbgnclass == 'perturbing agent' || sbgnclass == 'tag') {
+  if (shape == 'perturbing agent' || shape == 'tag') {
     return 'polygon';
   }
-  if(sbgnclass == 'source and sink' || sbgnclass == 'nucleic acid feature'){
-    return sbgnclass; 
+  if(shape == 'source and sink' || shape == 'nucleic acid feature'){
+    return shape; 
   }
   return 'ellipse';
 };
@@ -807,6 +811,10 @@ var truncateText = function (textProp, font) {
 
 var getElementContent = function (ele) {
   var sbgnclass = ele.data('sbgnclass');
+  if(sbgnclass.endsWith(' multimer')){
+    sbgnclass = sbgnclass.replace(' multimer', '');
+  }
+  
   var content = "";
   if (sbgnclass == 'macromolecule' || sbgnclass == 'simple chemical'
           || sbgnclass == 'phenotype' || sbgnclass == 'compartment'

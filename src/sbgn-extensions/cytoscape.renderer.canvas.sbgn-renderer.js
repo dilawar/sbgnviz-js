@@ -7,6 +7,12 @@
     $$.sbgn = {
     };
 
+    $$.sbgn.colors = {
+        clone: "#a9a9a9",
+        association: "#6B6B6B",
+        port: "#6B6B6B"
+    };
+
     $$.sbgn.drawNucAcidFeature = function (context, width, height,
             centerX, centerY, cornerRadius) {
         var halfWidth = width / 2;
@@ -248,7 +254,7 @@
                 var oldGlobalAlpha = context.globalAlpha;
                 context.globalAlpha = opacity;
 
-                var cornerRadius = $$.math.getRoundRectangleRadius(width, height);
+                var cornerRadius = window.cyMath.getRoundRectangleRadius(width, height);
 
                 $$.sbgn.drawNucAcidFeature(context, cloneWidth, cloneHeight,
                         cloneX, cloneY, cornerRadius, opacity);
