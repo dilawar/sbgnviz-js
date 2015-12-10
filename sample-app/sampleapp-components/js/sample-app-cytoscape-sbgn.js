@@ -743,7 +743,7 @@ var getCyShape = function (ele) {
     return 'roundrectangle';
   }
   if (shape == 'complex') {
-    return 'octagon';
+    return 'roundrectangle';
   }
   if (shape == 'simple chemical' || shape == 'association' || shape == 'dissociation'
           || shape == 'unspecified entity') {

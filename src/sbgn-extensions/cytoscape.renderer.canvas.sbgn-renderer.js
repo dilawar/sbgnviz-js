@@ -1,7 +1,8 @@
 (function ($$) {
     var sbgnShapes = $$.sbgnShapes = {
         'source and sink': true,
-        'nucleic acid feature': true
+        'nucleic acid feature': true,
+        'complex': true
     };
 
     $$.sbgn = {
@@ -40,10 +41,81 @@
         return false;
     };
 
+    //this function is created to have same corner length when
+    //complex's width or height is changed
+    $$.sbgn.generateComplexShapePoints = function (cornerLength, width, height) {
+        //cp stands for corner proportion
+        var cpX = cornerLength / width;
+        var cpY = cornerLength / height;
+
+        var complexPoints = [-1 + cpX, -1, -1, -1 + cpY, -1, 1 - cpY, -1 + cpX,
+            1, 1 - cpX, 1, 1, 1 - cpY, 1, -1 + cpY, 1 - cpX, -1];
+
+        return complexPoints;
+    };
+
     window.cyStyfn.types.nodeShape.enums.push('source and sink');
     window.cyStyfn.types.nodeShape.enums.push('nucleic acid feature');
+    window.cyStyfn.types.nodeShape.enums.push('complex');
 
     $$.sbgn.registerSbgnShapes = function () {
+        window.cyNodeShapes["complex"] = {
+            points: [],
+            multimerPadding: 5,
+            cornerLength: 12,
+            draw: function (context, node) {
+                var width = node.width();
+                var height = node.height();
+                var centerX = node._private.position.x;
+                var centerY = node._private.position.y;
+                var stateAndInfos = node._private.data.sbgnstatesandinfos;
+                var label = node._private.data.sbgnlabel;
+                var cornerLength = cyNodeShapes["complex"].cornerLength;
+                var multimerPadding = cyNodeShapes["complex"].multimerPadding;
+                var cloneMarker = node._private.data.sbgnclonemarker;
+
+                window.cyNodeShapes["complex"].points = $$.sbgn.generateComplexShapePoints(cornerLength,
+                        width, height);
+
+                //check whether sbgn class includes multimer substring or not
+                if ($$.sbgn.isMultimer(node)) {
+                    //add multimer shape
+                    window.cyRenderer.drawPolygonPath(context,
+                            centerX + multimerPadding, centerY + multimerPadding,
+                            width, height, window.cyNodeShapes["complex"].points);
+                    context.fill();
+                    context.stroke();
+
+                    $$.sbgn.cloneMarker.complex(context,
+                            centerX + multimerPadding, centerY + multimerPadding,
+                            width, height, cornerLength, cloneMarker, true,
+                            node._private.style['background-opacity'].value);
+
+                    //context.stroke();
+                }
+
+                window.cyRenderer.drawPolygonPath(context,
+                        centerX, centerY,
+                        width, height, cyNodeShapes["complex"].points);
+
+                context.fill();
+                context.stroke();
+
+                $$.sbgn.cloneMarker.complex(context, centerX, centerY,
+                        width, height, cornerLength, cloneMarker, false,
+                        node._private.style['background-opacity'].value);
+
+//                $$.sbgn.forceOpacityToOne(node, context);
+//                $$.sbgn.drawComplexStateAndInfo(context, node, stateAndInfos, centerX, centerY, width, height);
+
+            },
+            drawPath: function (context, node) {
+            },
+            intersectLine: window.cyNodeShapes["roundrectangle"].intersectLine,
+            intersectBox: window.cyNodeShapes["roundrectangle"].intersectBox,
+            checkPoint: window.cyNodeShapes["roundrectangle"].checkPoint
+        };
+
         window.cyNodeShapes["nucleic acid feature"] = {
             points: window.cyMath.generateUnitNgonPointsFitToSquare(4, 0),
             multimerPadding: 5,
@@ -286,13 +358,15 @@
                 var oldGlobalAlpha = context.globalAlpha;
                 context.globalAlpha = opacity;
 
-                renderer.drawPolygon(context,
+                window.cyRenderer.drawPolygonPath(context,
                         cloneX, cloneY,
                         cloneWidth, cloneHeight, markerPoints);
-
+                context.fill();    
+                    
                 context.fillStyle = oldStyle;
                 context.globalAlpha = oldGlobalAlpha;
-                //context.stroke();
+                
+//                context.stroke();
             }
         }
     };
