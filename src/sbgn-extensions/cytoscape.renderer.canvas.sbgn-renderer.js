@@ -2,7 +2,8 @@
     var sbgnShapes = $$.sbgnShapes = {
         'source and sink': true,
         'nucleic acid feature': true,
-        'complex': true
+        'complex': true,
+        'dissociation': true
     };
 
     $$.sbgn = {
@@ -12,6 +13,10 @@
         clone: "#a9a9a9",
         association: "#6B6B6B",
         port: "#6B6B6B"
+    };
+
+    $$.sbgn.drawEllipsePath = function (context, x, y, width, height) {
+        window.cyNodeShapes['ellipse'].drawPath(context, x, y, width, height);
     };
 
     $$.sbgn.drawNucAcidFeature = function (context, width, height,
@@ -54,67 +59,133 @@
         return complexPoints;
     };
 
+    $$.sbgn.drawPortsToEllipseShape = function (context, node) {
+        var width = node.width();
+        var height = node.height();
+        var centerX = node._private.position.x;
+        var centerY = node._private.position.y;
+        var padding = node._private.style['border-width'].pxValue / 2;
+
+        for (var i = 0; i < node._private.data.ports.length; i++) {
+            var port = node._private.data.ports[i];
+            var portX = port.x + centerX;
+            var portY = port.y + centerY;
+            var closestPoint = $$.math.intersectLineEllipse(
+                    portX, portY, centerX, centerY, width / 2, height / 2);
+            context.moveTo(portX, portY);
+            context.lineTo(closestPoint[0], closestPoint[1]);
+            context.stroke();
+
+            //add a little black circle to ports
+            var oldStyle = context.fillStyle;
+            context.fillStyle = $$.sbgn.colors.port;
+            $$.sbgn.drawEllipse(context, portX, portY, 2, 2);
+            context.fillStyle = oldStyle;
+            context.stroke();
+        }
+    };
+
     window.cyStyfn.types.nodeShape.enums.push('source and sink');
     window.cyStyfn.types.nodeShape.enums.push('nucleic acid feature');
     window.cyStyfn.types.nodeShape.enums.push('complex');
+    window.cyStyfn.types.nodeShape.enums.push('dissociation');
 
     $$.sbgn.registerSbgnShapes = function () {
-        window.cyNodeShapes["complex"] = {
-            points: [],
-            multimerPadding: 5,
-            cornerLength: 12,
+        window.cyNodeShapes["dissociation"] = {
             draw: function (context, node) {
-                var width = node.width();
-                var height = node.height();
                 var centerX = node._private.position.x;
                 var centerY = node._private.position.y;
-                var stateAndInfos = node._private.data.sbgnstatesandinfos;
-                var label = node._private.data.sbgnlabel;
-                var cornerLength = cyNodeShapes["complex"].cornerLength;
-                var multimerPadding = cyNodeShapes["complex"].multimerPadding;
-                var cloneMarker = node._private.data.sbgnclonemarker;
 
-                window.cyNodeShapes["complex"].points = $$.sbgn.generateComplexShapePoints(cornerLength,
-                        width, height);
+                var width = node.width();
+                var height = node.height();
 
-                //check whether sbgn class includes multimer substring or not
-                if ($$.sbgn.isMultimer(node)) {
-                    //add multimer shape
-                    window.cyRenderer.drawPolygonPath(context,
-                            centerX + multimerPadding, centerY + multimerPadding,
-                            width, height, window.cyNodeShapes["complex"].points);
-                    context.fill();
-                    context.stroke();
+                context.beginPath();
+                context.translate(centerX, centerY);
+                context.scale(width / 4, height / 4);
 
-                    $$.sbgn.cloneMarker.complex(context,
-                            centerX + multimerPadding, centerY + multimerPadding,
-                            width, height, cornerLength, cloneMarker, true,
-                            node._private.style['background-opacity'].value);
+                // At origin, radius 1, 0 to 2pi
+                context.arc(0, 0, 1, 0, Math.PI * 2 * 0.999, false); // *0.999 b/c chrome rendering bug on full circle
 
-                    //context.stroke();
-                }
+                context.closePath();
+                context.scale(4 / width, 4 / height);
+                context.translate(-centerX, -centerY);
 
-                window.cyRenderer.drawPolygonPath(context,
-                        centerX, centerY,
-                        width, height, cyNodeShapes["complex"].points);
+                $$.sbgn.drawEllipse(context, centerX, centerY, width / 2, height / 2);
 
-                context.fill();
                 context.stroke();
 
-                $$.sbgn.cloneMarker.complex(context, centerX, centerY,
-                        width, height, cornerLength, cloneMarker, false,
-                        node._private.style['background-opacity'].value);
+                $$.sbgn.drawEllipse(context, centerX, centerY, width, height);
 
-//                $$.sbgn.forceOpacityToOne(node, context);
-//                $$.sbgn.drawComplexStateAndInfo(context, node, stateAndInfos, centerX, centerY, width, height);
+                context.stroke();
+
+                context.fill();
+
+                $$.sbgn.drawPortsToEllipseShape(context, node);
 
             },
             drawPath: function (context, node) {
+
             },
-            intersectLine: window.cyNodeShapes["roundrectangle"].intersectLine,
-            intersectBox: window.cyNodeShapes["roundrectangle"].intersectBox,
-            checkPoint: window.cyNodeShapes["roundrectangle"].checkPoint
+            intersectLine: window.cyNodeShapes["ellipse"].intersectLine,
+            intersectBox: window.cyNodeShapes["ellipse"].intersectBox,
+            checkPoint: window.cyNodeShapes["ellipse"].checkPoint
         };
+//        window.cyNodeShapes["complex"] = {
+//            points: [],
+//            multimerPadding: 5,
+//            cornerLength: 12,
+//            draw: function (context, node) {
+//                var width = node.width();
+//                var height = node.height();
+//                var centerX = node._private.position.x;
+//                var centerY = node._private.position.y;
+//                var stateAndInfos = node._private.data.sbgnstatesandinfos;
+//                var label = node._private.data.sbgnlabel;
+//                var cornerLength = cyNodeShapes["complex"].cornerLength;
+//                var multimerPadding = cyNodeShapes["complex"].multimerPadding;
+//                var cloneMarker = node._private.data.sbgnclonemarker;
+//
+//                window.cyNodeShapes["complex"].points = $$.sbgn.generateComplexShapePoints(cornerLength,
+//                        width, height);
+//
+//                //check whether sbgn class includes multimer substring or not
+//                if ($$.sbgn.isMultimer(node)) {
+//                    //add multimer shape
+//                    window.cyRenderer.drawPolygonPath(context,
+//                            centerX + multimerPadding, centerY + multimerPadding,
+//                            width, height, window.cyNodeShapes["complex"].points);
+//                    context.fill();
+//                    context.stroke();
+//
+//                    $$.sbgn.cloneMarker.complex(context,
+//                            centerX + multimerPadding, centerY + multimerPadding,
+//                            width, height, cornerLength, cloneMarker, true,
+//                            node._private.style['background-opacity'].value);
+//
+//                    //context.stroke();
+//                }
+//
+//                window.cyRenderer.drawPolygonPath(context,
+//                        centerX, centerY,
+//                        width, height, cyNodeShapes["complex"].points);
+//
+//                context.fill();
+//                context.stroke();
+//
+//                $$.sbgn.cloneMarker.complex(context, centerX, centerY,
+//                        width, height, cornerLength, cloneMarker, false,
+//                        node._private.style['background-opacity'].value);
+//
+////                $$.sbgn.forceOpacityToOne(node, context);
+////                $$.sbgn.drawComplexStateAndInfo(context, node, stateAndInfos, centerX, centerY, width, height);
+//
+//            },
+//            drawPath: function (context, node) {
+//            },
+//            intersectLine: window.cyNodeShapes["roundrectangle"].intersectLine,
+//            intersectBox: window.cyNodeShapes["roundrectangle"].intersectBox,
+//            checkPoint: window.cyNodeShapes["roundrectangle"].checkPoint
+//        };
 
         window.cyNodeShapes["nucleic acid feature"] = {
             points: window.cyMath.generateUnitNgonPointsFitToSquare(4, 0),
@@ -361,11 +432,11 @@
                 window.cyRenderer.drawPolygonPath(context,
                         cloneX, cloneY,
                         cloneWidth, cloneHeight, markerPoints);
-                context.fill();    
-                    
+                context.fill();
+
                 context.fillStyle = oldStyle;
                 context.globalAlpha = oldGlobalAlpha;
-                
+
 //                context.stroke();
             }
         }

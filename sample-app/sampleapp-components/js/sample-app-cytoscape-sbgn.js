@@ -745,8 +745,7 @@ var getCyShape = function (ele) {
   if (shape == 'complex') {
     return 'roundrectangle';
   }
-  if (shape == 'simple chemical' || shape == 'association' || shape == 'dissociation'
-          || shape == 'unspecified entity') {
+  if (shape == 'simple chemical' || shape == 'association' || shape == 'unspecified entity') {
     return 'ellipse';
   }
   if (shape == 'process' || shape == 'omitted process' || shape == 'uncertain process') {
@@ -758,7 +757,7 @@ var getCyShape = function (ele) {
   if (shape == 'perturbing agent' || shape == 'tag') {
     return 'polygon';
   }
-  if(shape == 'source and sink' || shape == 'nucleic acid feature'){
+  if(shape == 'source and sink' || shape == 'nucleic acid feature' || shape == 'dissociation'){
     return shape; 
   }
   return 'ellipse';
