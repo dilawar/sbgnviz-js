@@ -739,13 +739,13 @@ var getCyShape = function (ele) {
     shape = shape.replace(' multimer', '');
   }
   
-  if (shape == 'macromolecule' || shape == 'compartment') {
+  if ( shape == 'compartment') {
     return 'roundrectangle';
   }
   if (shape == 'complex') {
     return 'roundrectangle';
   }
-  if (shape == 'simple chemical' || shape == 'association' || shape == 'unspecified entity') {
+  if (shape == 'association' || shape == 'unspecified entity') {
     return 'ellipse';
   }
   if (shape == 'process' || shape == 'omitted process' || shape == 'uncertain process') {
@@ -757,7 +757,8 @@ var getCyShape = function (ele) {
   if (shape == 'perturbing agent' || shape == 'tag') {
     return 'polygon';
   }
-  if(shape == 'source and sink' || shape == 'nucleic acid feature' || shape == 'dissociation'){
+  if(shape == 'source and sink' || shape == 'nucleic acid feature' || shape == 'dissociation'
+          || shape == 'macromolecule' || shape == 'simple chemical'){
     return shape; 
   }
   return 'ellipse';
