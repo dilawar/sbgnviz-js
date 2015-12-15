@@ -326,6 +326,7 @@
                   centerX + multimerPadding, centerY + multimerPadding,
                   width, height);
 
+          context.fill();
           context.stroke();
 
           $$.sbgn.cloneMarker.macromolecule(context,
@@ -339,6 +340,7 @@
         window.cyRenderer.drawRoundRectanglePath(context,
                 centerX, centerY,
                 width, height);
+        context.fill();
 
         context.stroke();
 
