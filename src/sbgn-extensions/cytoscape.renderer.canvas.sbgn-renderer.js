@@ -16,7 +16,8 @@
     association: "#6B6B6B",
     port: "#6B6B6B"
   };
-  
+
+
   $$.sbgn.drawStateAndInfos = function (node, context, centerX, centerY) {
     var stateAndInfos = node._private.data.sbgnstatesandinfos;
 
@@ -34,7 +35,7 @@
       if (state.clazz == "state variable") {//draw ellipse
         //var stateLabel = state.state.value;
         $$.sbgn.drawEllipse(context, stateCenterX, stateCenterY,
-                stateWidth, stateHeight);
+            stateWidth, stateHeight);
 
         context.fill();
         textProp.state = state.state;
@@ -45,10 +46,10 @@
       }
       else if (state.clazz == "unit of information") {//draw rectangle
         window.cyRenderer.drawRoundRectanglePath(context,
-                stateCenterX, stateCenterY,
-                stateWidth, stateHeight,
-                10);
-        
+            stateCenterX, stateCenterY,
+            stateWidth, stateHeight,
+            10);
+
         context.fill();
 
         textProp.label = state.label.text;
@@ -58,7 +59,7 @@
       }
     }
   };
-  
+
   //we need to force opacity to 1 since we might have state and info boxes.
   //having opaque nodes which have state and info boxes gives unpleasent results.
   $$.sbgn.forceOpacityToOne = function (node, context) {
@@ -68,14 +69,14 @@
     }
 
     context.fillStyle = "rgba("
-            + node._private.style["background-color"].value[0] + ","
-            + node._private.style["background-color"].value[1] + ","
-            + node._private.style["background-color"].value[2] + ","
-            + (1 * node._private.style["opacity"].value * parentOpacity) + ")";
+        + node._private.style["background-color"].value[0] + ","
+        + node._private.style["background-color"].value[1] + ","
+        + node._private.style["background-color"].value[2] + ","
+        + (1 * node._private.style["opacity"].value * parentOpacity) + ")";
   };
 
   $$.sbgn.drawSimpleChemicalPath = function (
-          context, x, y, width, height) {
+      context, x, y, width, height) {
 
     var halfWidth = width / 2;
     var halfHeight = height / 2;
@@ -104,13 +105,13 @@
   };
 
   $$.sbgn.drawSimpleChemical = function (
-          context, x, y, width, height) {
+      context, x, y, width, height) {
     $$.sbgn.drawSimpleChemicalPath(context, x, y, width, height);
     context.fill();
   };
 
   function simpleChemicalLeftClone(context, centerX, centerY,
-          width, height, cloneMarker, opacity) {
+      width, height, cloneMarker, opacity) {
     if (cloneMarker != null) {
       var oldGlobalAlpha = context.globalAlpha;
       context.globalAlpha = opacity;
@@ -142,7 +143,7 @@
   ;
 
   function simpleChemicalRightClone(context, centerX, centerY,
-          width, height, cloneMarker, opacity) {
+      width, height, cloneMarker, opacity) {
     if (cloneMarker != null) {
       var oldGlobalAlpha = context.globalAlpha;
       context.globalAlpha = opacity;
@@ -178,7 +179,7 @@
   };
 
   $$.sbgn.drawNucAcidFeature = function (context, width, height,
-          centerX, centerY, cornerRadius) {
+      centerX, centerY, cornerRadius) {
     var halfWidth = width / 2;
     var halfHeight = height / 2;
 
@@ -229,7 +230,7 @@
       var portX = port.x + centerX;
       var portY = port.y + centerY;
       var closestPoint = $$.math.intersectLineEllipse(
-              portX, portY, centerX, centerY, width / 2, height / 2);
+          portX, portY, centerX, centerY, width / 2, height / 2);
       context.moveTo(portX, portY);
       context.lineTo(closestPoint[0], closestPoint[1]);
       context.stroke();
@@ -269,27 +270,27 @@
         if ($$.sbgn.isMultimer(node)) {
           //add multimer shape
           $$.sbgn.drawSimpleChemical(context, centerX + multimerPadding,
-                  centerY + multimerPadding, width, height);
+              centerY + multimerPadding, width, height);
 
           context.stroke();
 
           $$.sbgn.cloneMarker.simpleChemical(context,
-                  centerX + multimerPadding, centerY + multimerPadding,
-                  width - padding, height - padding, cloneMarker, true,
-                  node._private.style['background-opacity'].value);
+              centerX + multimerPadding, centerY + multimerPadding,
+              width - padding, height - padding, cloneMarker, true,
+              node._private.style['background-opacity'].value);
 
           //context.stroke();
         }
 
         $$.sbgn.drawSimpleChemical(context,
-                centerX, centerY,
-                width, height);
+            centerX, centerY,
+            width, height);
 
         context.stroke();
 
         $$.sbgn.cloneMarker.simpleChemical(context, centerX, centerY,
-                width - padding, height - padding, cloneMarker, false,
-                node._private.style['background-opacity'].value);
+            width - padding, height - padding, cloneMarker, false,
+            node._private.style['background-opacity'].value);
 
         var nodeProp = {'label': label, 'centerX': centerX, 'centerY': centerY,
           'opacity': node._private.style['text-opacity'].value, 'width': node.width(), 'height': node.height()};
@@ -323,30 +324,30 @@
         if ($$.sbgn.isMultimer(node)) {
           //add multimer shape
           window.cyRenderer.drawRoundRectanglePath(context,
-                  centerX + multimerPadding, centerY + multimerPadding,
-                  width, height);
+              centerX + multimerPadding, centerY + multimerPadding,
+              width, height);
 
           context.fill();
           context.stroke();
 
           $$.sbgn.cloneMarker.macromolecule(context,
-                  centerX + multimerPadding, centerY + multimerPadding,
-                  width, height, cloneMarker, true,
-                  node._private.style['background-opacity'].value);
+              centerX + multimerPadding, centerY + multimerPadding,
+              width, height, cloneMarker, true,
+              node._private.style['background-opacity'].value);
 
           //context.stroke();
         }
 
         window.cyRenderer.drawRoundRectanglePath(context,
-                centerX, centerY,
-                width, height);
+            centerX, centerY,
+            width, height);
         context.fill();
 
         context.stroke();
 
         $$.sbgn.cloneMarker.macromolecule(context, centerX, centerY,
-                width, height, cloneMarker, false,
-                node._private.style['background-opacity'].value);
+            width, height, cloneMarker, false,
+            node._private.style['background-opacity'].value);
 
         $$.sbgn.drawStateAndInfos(node, context, centerX, centerY);
 
@@ -474,27 +475,27 @@
         if ($$.sbgn.isMultimer(node)) {
           //add multimer shape
           $$.sbgn.drawNucAcidFeature(context, width, height,
-                  centerX + multimerPadding,
-                  centerY + multimerPadding, cornerRadius);
+              centerX + multimerPadding,
+              centerY + multimerPadding, cornerRadius);
 
           context.stroke();
 
           $$.sbgn.cloneMarker.nucleicAcidFeature(context,
-                  centerX + multimerPadding, centerY + multimerPadding,
-                  width, height, cloneMarker, true,
-                  node._private.style['background-opacity'].value);
+              centerX + multimerPadding, centerY + multimerPadding,
+              width, height, cloneMarker, true,
+              node._private.style['background-opacity'].value);
 
           //context.stroke();
         }
 
         $$.sbgn.drawNucAcidFeature(context, width, height, centerX,
-                centerY, cornerRadius);
+            centerY, cornerRadius);
 
         context.stroke();
 
         $$.sbgn.cloneMarker.nucleicAcidFeature(context, centerX, centerY,
-                width, height, cloneMarker, false,
-                node._private.style['background-opacity'].value);
+            width, height, cloneMarker, false,
+            node._private.style['background-opacity'].value);
 
         var nodeProp = {'label': label, 'centerX': centerX, 'centerY': centerY,
           'opacity': node._private.style['text-opacity'].value, 'width': node.width(), 'height': node.height()};
@@ -523,7 +524,7 @@
         var cloneMarker = node._private.data.sbgnclonemarker;
 
         $$.sbgn.drawEllipse(context, centerX, centerY,
-                width, height);
+            width, height);
 
         context.stroke();
 
@@ -541,8 +542,8 @@
         context.stroke();
 
         $$.sbgn.cloneMarker.sourceAndSink(context, centerX, centerY,
-                width, height, cloneMarker,
-                node._private.style['background-opacity'].value);
+            width, height, cloneMarker,
+            node._private.style['background-opacity'].value);
 
       },
       drawPath: function (context, node) {
@@ -561,7 +562,7 @@
 
   $$.sbgn.cloneMarker = {
     unspecifiedEntity: function (context, centerX, centerY,
-            width, height, cloneMarker, opacity) {
+        width, height, cloneMarker, opacity) {
       if (cloneMarker != null) {
         var oldGlobalAlpha = context.globalAlpha;
         context.globalAlpha = opacity;
@@ -591,12 +592,12 @@
       }
     },
     sourceAndSink: function (context, centerX, centerY,
-            width, height, cloneMarker, opacity) {
+        width, height, cloneMarker, opacity) {
       $$.sbgn.cloneMarker.unspecifiedEntity(context, centerX, centerY,
-              width, height, cloneMarker, opacity);
+          width, height, cloneMarker, opacity);
     },
     simpleChemical: function (context, centerX, centerY,
-            width, height, cloneMarker, isMultimer, opacity) {
+        width, height, cloneMarker, isMultimer, opacity) {
       if (cloneMarker != null) {
         var cornerRadius = Math.min(width / 2, height / 2);
 
@@ -606,10 +607,10 @@
         var secondCircleCenterY = centerY;
 
         simpleChemicalLeftClone(context, firstCircleCenterX, firstCircleCenterY,
-                2 * cornerRadius, 2 * cornerRadius, cloneMarker, opacity);
+            2 * cornerRadius, 2 * cornerRadius, cloneMarker, opacity);
 
         simpleChemicalRightClone(context, secondCircleCenterX, secondCircleCenterY,
-                2 * cornerRadius, 2 * cornerRadius, cloneMarker, opacity);
+            2 * cornerRadius, 2 * cornerRadius, cloneMarker, opacity);
 
         var oldStyle = context.fillStyle;
         context.fillStyle = $$.sbgn.colors.clone;
@@ -629,7 +630,7 @@
       }
     },
     perturbingAgent: function (context, centerX, centerY,
-            width, height, cloneMarker, opacity) {
+        width, height, cloneMarker, opacity) {
       if (cloneMarker != null) {
         var cloneWidth = width;
         var cloneHeight = height / 4;
@@ -644,8 +645,8 @@
         context.globalAlpha = opacity;
 
         renderer.drawPolygon(context,
-                cloneX, cloneY,
-                cloneWidth, cloneHeight, markerPoints);
+            cloneX, cloneY,
+            cloneWidth, cloneHeight, markerPoints);
 
         context.fill();
 
@@ -655,7 +656,7 @@
       }
     },
     nucleicAcidFeature: function (context, centerX, centerY,
-            width, height, cloneMarker, isMultimer, opacity) {
+        width, height, cloneMarker, isMultimer, opacity) {
       if (cloneMarker != null) {
         var cloneWidth = width;
         var cloneHeight = height / 4;
@@ -670,7 +671,7 @@
         var cornerRadius = window.cyMath.getRoundRectangleRadius(width, height);
 
         $$.sbgn.drawNucAcidFeature(context, cloneWidth, cloneHeight,
-                cloneX, cloneY, cornerRadius, opacity);
+            cloneX, cloneY, cornerRadius, opacity);
 
         context.fillStyle = oldStyle;
         context.globalAlpha = oldGlobalAlpha;
@@ -678,12 +679,12 @@
       }
     },
     macromolecule: function (context, centerX, centerY,
-            width, height, cloneMarker, isMultimer, opacity) {
+        width, height, cloneMarker, isMultimer, opacity) {
       $$.sbgn.cloneMarker.nucleicAcidFeature(context, centerX, centerY,
-              width, height, cloneMarker, isMultimer, opacity);
+          width, height, cloneMarker, isMultimer, opacity);
     },
     complex: function (context, centerX, centerY,
-            width, height, cornerLength, cloneMarker, isMultimer, opacity) {
+        width, height, cornerLength, cloneMarker, isMultimer, opacity) {
       if (cloneMarker != null) {
         var cpX = cornerLength / width;
         var cpY = cornerLength / height;
@@ -700,8 +701,8 @@
         context.globalAlpha = opacity;
 
         window.cyRenderer.drawPolygonPath(context,
-                cloneX, cloneY,
-                cloneWidth, cloneHeight, markerPoints);
+            cloneX, cloneY,
+            cloneWidth, cloneHeight, markerPoints);
         context.fill();
 
         context.fillStyle = oldStyle;
@@ -727,30 +728,30 @@
       var port = node._private.data.ports[i];
       if (portId == port.id) {
         return $$.math.intersectLineEllipse(
-                x, y, port.x + nodeX, port.y + nodeY, 1, 1);
+            x, y, port.x + nodeX, port.y + nodeY, 1, 1);
       }
     }
     return [];
   };
 
-//    $$.sbgn.intersetLineSelection = function (render, node, x, y, portId) {
-//        //TODO: do it for all classes in sbgn, create a sbgn class array to check
-//        if (sbgnShapes[render.getNodeShape(node)]) {
-//            return window.cyNodeShapes[render.getNodeShape(node)].intersectLine(
-//                    node, x, y, portId);
-//        }
-//        else {
-//            return window.cyNodeShapes[render.getNodeShape(node)].intersectLine(
-//                    node._private.position.x,
-//                    node._private.position.y,
-//                    node.outerWidth(),
-//                    node.outerHeight(),
-//                    x, //halfPointX,
-//                    y, //halfPointY
-//                    node._private.style["border-width"].pxValue / 2
-//                    );
-//        }
-//    };
+  $$.sbgn.intersetLineSelection = function (render, node, x, y, portId) {
+    //TODO: do it for all classes in sbgn, create a sbgn class array to check
+    if (sbgnShapes[render.getNodeShape(node)]) {
+      return window.cyNodeShapes[render.getNodeShape(node)].intersectLine(
+          node, x, y, portId);
+    }
+    else {
+      return window.cyNodeShapes[render.getNodeShape(node)].intersectLine(
+          node._private.position.x,
+          node._private.position.y,
+          node.outerWidth(),
+          node.outerHeight(),
+          x, //halfPointX,
+          y, //halfPointY
+          node._private.style["border-width"].pxValue / 2
+          );
+    }
+  };
 
 
 })(cytoscape);
