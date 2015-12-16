@@ -356,7 +356,45 @@
       },
       drawPath: function (context, node) {
       },
-      intersectLine: window.cyNodeShapes["roundrectangle"].intersectLine,
+      intersectLine: function (node, x, y, portId) {
+        var centerX = node._private.position.x;
+        var centerY = node._private.position.y;
+        var width = node.width();
+        var height = node.height();
+        var padding = node._private.style["border-width"].pxValue / 2;
+        var multimerPadding = window.cyNodeShapes["macromolecule"].multimerPadding;
+        var cornerRadius = window.cyMath.getRoundRectangleRadius(width, height);
+
+        var portIntersection = $$.sbgn.intersectLinePorts(node, x, y, portId);
+        if (portIntersection.length > 0) {
+          return portIntersection;
+        }
+
+        var stateAndInfoIntersectLines = $$.sbgn.intersectLineStateAndInfoBoxes(
+            node, x, y);
+
+        var nodeIntersectLines = $$.sbgn.roundRectangleIntersectLine(
+            x, y,
+            centerX, centerY,
+            centerX, centerY,
+            width, height,
+            cornerRadius, padding);
+
+        //check whether sbgn class includes multimer substring or not
+        var multimerIntersectionLines = [];
+        if ($$.sbgn.isMultimer(node)) {
+          multimerIntersectionLines = $$.sbgn.roundRectangleIntersectLine(
+              x, y,
+              centerX, centerY,
+              centerX + multimerPadding, centerY + multimerPadding,
+              width, height,
+              cornerRadius, padding);
+        }
+
+        var intersections = stateAndInfoIntersectLines.concat(nodeIntersectLines, multimerIntersectionLines);
+
+        return $$.sbgn.closestIntersectionPoint([x, y], intersections);
+      },
       intersectBox: window.cyNodeShapes["roundrectangle"].intersectBox,
       checkPoint: window.cyNodeShapes["roundrectangle"].checkPoint
     };
@@ -733,10 +771,215 @@
     }
     return [];
   };
+  
+  $$.sbgn.closestIntersectionPoint = function (point, intersections) {
+    if (intersections.length <= 0)
+      return [];
+
+    var closestIntersection = [];
+    var minDistance = Number.MAX_VALUE;
+
+    for (var i = 0; i < intersections.length; i = i + 2) {
+      var checkPoint = [intersections[i], intersections[i + 1]];
+      var distance = $$.math.calculateDistance(point, checkPoint);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIntersection = checkPoint;
+      }
+    }
+
+    return closestIntersection;
+  };
+
+  //this function gives the intersections of any line with a round rectangle 
+  $$.sbgn.roundRectangleIntersectLine = function (
+      x1, y1, x2, y2, nodeX, nodeY, width, height, cornerRadius, padding) {
+
+    var halfWidth = width / 2;
+    var halfHeight = height / 2;
+
+    // Check intersections with straight line segments
+    var straightLineIntersections = [];
+
+    // Top segment, left to right
+    {
+      var topStartX = nodeX - halfWidth + cornerRadius - padding;
+      var topStartY = nodeY - halfHeight - padding;
+      var topEndX = nodeX + halfWidth - cornerRadius + padding;
+      var topEndY = topStartY;
+
+      var intersection = window.cyMath.finiteLinesIntersect(
+          x1, y1, x2, y2, topStartX, topStartY, topEndX, topEndY, false);
+
+      if (intersection.length > 0) {
+        straightLineIntersections = straightLineIntersections.concat(intersection);
+      }
+    }
+
+    // Right segment, top to bottom
+    {
+      var rightStartX = nodeX + halfWidth + padding;
+      var rightStartY = nodeY - halfHeight + cornerRadius - padding;
+      var rightEndX = rightStartX;
+      var rightEndY = nodeY + halfHeight - cornerRadius + padding;
+
+      var intersection = window.cyMath.finiteLinesIntersect(
+          x1, y1, x2, y2, rightStartX, rightStartY, rightEndX, rightEndY, false);
+
+      if (intersection.length > 0) {
+        straightLineIntersections = straightLineIntersections.concat(intersection);
+      }
+    }
+
+    // Bottom segment, left to right
+    {
+      var bottomStartX = nodeX - halfWidth + cornerRadius - padding;
+      var bottomStartY = nodeY + halfHeight + padding;
+      var bottomEndX = nodeX + halfWidth - cornerRadius + padding;
+      var bottomEndY = bottomStartY;
+
+      var intersection = window.cyMath.finiteLinesIntersect(
+          x1, y1, x2, y2, bottomStartX, bottomStartY, bottomEndX, bottomEndY, false);
+
+      if (intersection.length > 0) {
+        straightLineIntersections = straightLineIntersections.concat(intersection);
+      }
+    }
+
+    // Left segment, top to bottom
+    {
+      var leftStartX = nodeX - halfWidth - padding;
+      var leftStartY = nodeY - halfHeight + cornerRadius - padding;
+      var leftEndX = leftStartX;
+      var leftEndY = nodeY + halfHeight - cornerRadius + padding;
+
+      var intersection = window.cyMath.finiteLinesIntersect(
+          x1, y1, x2, y2, leftStartX, leftStartY, leftEndX, leftEndY, false);
+
+      if (intersection.length > 0) {
+        straightLineIntersections = straightLineIntersections.concat(intersection);
+      }
+    }
+
+    // Check intersections with arc segments
+    var arcIntersections;
+
+    // Top Left
+    {
+      var topLeftCenterX = nodeX - halfWidth + cornerRadius;
+      var topLeftCenterY = nodeY - halfHeight + cornerRadius
+      arcIntersections = window.cyMath.intersectLineCircle(
+          x1, y1, x2, y2,
+          topLeftCenterX, topLeftCenterY, cornerRadius + padding);
+
+      // Ensure the intersection is on the desired quarter of the circle
+      if (arcIntersections.length > 0
+          && arcIntersections[0] <= topLeftCenterX
+          && arcIntersections[1] <= topLeftCenterY) {
+        straightLineIntersections = straightLineIntersections.concat(arcIntersections);
+      }
+    }
+
+    // Top Right
+    {
+      var topRightCenterX = nodeX + halfWidth - cornerRadius;
+      var topRightCenterY = nodeY - halfHeight + cornerRadius
+      arcIntersections = window.cyMath.intersectLineCircle(
+          x1, y1, x2, y2,
+          topRightCenterX, topRightCenterY, cornerRadius + padding);
+
+      // Ensure the intersection is on the desired quarter of the circle
+      if (arcIntersections.length > 0
+          && arcIntersections[0] >= topRightCenterX
+          && arcIntersections[1] <= topRightCenterY) {
+        straightLineIntersections = straightLineIntersections.concat(arcIntersections);
+      }
+    }
+
+    // Bottom Right
+    {
+      var bottomRightCenterX = nodeX + halfWidth - cornerRadius;
+      var bottomRightCenterY = nodeY + halfHeight - cornerRadius
+      arcIntersections = window.cyMath.intersectLineCircle(
+          x1, y1, x2, y2,
+          bottomRightCenterX, bottomRightCenterY, cornerRadius + padding);
+
+      // Ensure the intersection is on the desired quarter of the circle
+      if (arcIntersections.length > 0
+          && arcIntersections[0] >= bottomRightCenterX
+          && arcIntersections[1] >= bottomRightCenterY) {
+        straightLineIntersections = straightLineIntersections.concat(arcIntersections);
+      }
+    }
+
+    // Bottom Left
+    {
+      var bottomLeftCenterX = nodeX - halfWidth + cornerRadius;
+      var bottomLeftCenterY = nodeY + halfHeight - cornerRadius
+      arcIntersections = window.cyMath.intersectLineCircle(
+          x1, y1, x2, y2,
+          bottomLeftCenterX, bottomLeftCenterY, cornerRadius + padding);
+
+      // Ensure the intersection is on the desired quarter of the circle
+      if (arcIntersections.length > 0
+          && arcIntersections[0] <= bottomLeftCenterX
+          && arcIntersections[1] >= bottomLeftCenterY) {
+        straightLineIntersections = straightLineIntersections.concat(arcIntersections);
+      }
+    }
+
+    if (straightLineIntersections.length > 0)
+      return straightLineIntersections;
+    return []; // if nothing
+  };
+
+  $$.sbgn.intersectLineStateAndInfoBoxes = function (node, x, y) {
+    var centerX = node._private.position.x;
+    var centerY = node._private.position.y;
+    var padding = node._private.style["border-width"].pxValue / 2;
+
+    var stateAndInfos = node._private.data.sbgnstatesandinfos;
+
+    var stateCount = 0, infoCount = 0;
+
+    var intersections = [];
+
+    for (var i = 0; i < stateAndInfos.length; i++) {
+      var state = stateAndInfos[i];
+      var stateWidth = state.bbox.w;
+      var stateHeight = state.bbox.h;
+      var stateCenterX = state.bbox.x * node.width() / 100 + centerX;
+      var stateCenterY = state.bbox.y * node.height() / 100 + centerY;
+
+      if (state.clazz == "state variable" && stateCount < 2) {//draw ellipse
+        var stateIntersectLines = $$.sbgn.intersectLineEllipse(x, y, centerX, centerY,
+            stateCenterX, stateCenterY, stateWidth, stateHeight, padding);
+
+        if (stateIntersectLines.length > 0)
+          intersections = intersections.concat(stateIntersectLines);
+
+        stateCount++;
+      }
+      else if (state.clazz == "unit of information" && infoCount < 2) {//draw rectangle
+        var infoIntersectLines = $$.sbgn.roundRectangleIntersectLine(x, y, centerX, centerY,
+            stateCenterX, stateCenterY, stateWidth, stateHeight, 5, padding);
+
+        if (infoIntersectLines.length > 0)
+          intersections = intersections.concat(infoIntersectLines);
+
+        infoCount++;
+      }
+
+    }
+    if (intersections.length > 0)
+      return intersections;
+    return [];
+  };
 
   $$.sbgn.intersetLineSelection = function (render, node, x, y, portId) {
     //TODO: do it for all classes in sbgn, create a sbgn class array to check
-    if (sbgnShapes[render.getNodeShape(node)]) {
+    if (tempSbgnShapes[render.getNodeShape(node)]) {
       return window.cyNodeShapes[render.getNodeShape(node)].intersectLine(
           node, x, y, portId);
     }
@@ -752,6 +995,19 @@
           );
     }
   };
+  
+  //This is a temprorary function written for testing purpose and will be deleted 
+  $$.sbgn.tempFcn = function(render, node){
+    var tempSbgnShapes = {
+      'macromolecule': true
+    };
+    
+    if(tempSbgnShapes[render.getNodeShape(node)]){
+      return true;
+    }
+    
+    return false;
+  }
 
 
 })(cytoscape);
