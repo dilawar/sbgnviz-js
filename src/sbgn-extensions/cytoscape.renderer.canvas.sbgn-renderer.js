@@ -11,6 +11,11 @@
   $$.sbgn = {
   };
 
+  window.cyMath.calculateDistance = function (point1, point2) {
+    var distance = Math.pow(point1[0] - point2[0], 2) + Math.pow(point1[1] - point2[1], 2);
+    return Math.sqrt(distance);
+  };
+
   $$.sbgn.colors = {
     clone: "#a9a9a9",
     association: "#6B6B6B",
@@ -361,7 +366,7 @@
         var centerY = node._private.position.y;
         var width = node.width();
         var height = node.height();
-        var padding = node._private.style["border-width"].pxValue / 2;
+        var padding = node._private.style["border-width"].value / 2;
         var multimerPadding = window.cyNodeShapes["macromolecule"].multimerPadding;
         var cornerRadius = window.cyMath.getRoundRectangleRadius(width, height);
 
@@ -781,7 +786,7 @@
 
     for (var i = 0; i < intersections.length; i = i + 2) {
       var checkPoint = [intersections[i], intersections[i + 1]];
-      var distance = $$.math.calculateDistance(point, checkPoint);
+      var distance = window.cyMath.calculateDistance(point, checkPoint);
 
       if (distance < minDistance) {
         minDistance = distance;
@@ -850,6 +855,7 @@
     // Left segment, top to bottom
     {
       var leftStartX = nodeX - halfWidth - padding;
+      console.log(padding);
       var leftStartY = nodeY - halfHeight + cornerRadius - padding;
       var leftEndX = leftStartX;
       var leftEndY = nodeY + halfHeight - cornerRadius + padding;
