@@ -855,7 +855,6 @@
     // Left segment, top to bottom
     {
       var leftStartX = nodeX - halfWidth - padding;
-      console.log(padding);
       var leftStartY = nodeY - halfHeight + cornerRadius - padding;
       var leftEndX = leftStartX;
       var leftEndY = nodeY + halfHeight - cornerRadius + padding;
