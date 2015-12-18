@@ -982,24 +982,24 @@
     return [];
   };
 
-  $$.sbgn.intersetLineSelection = function (render, node, x, y, portId) {
-    //TODO: do it for all classes in sbgn, create a sbgn class array to check
-    if (tempSbgnShapes[render.getNodeShape(node)]) {
-      return window.cyNodeShapes[render.getNodeShape(node)].intersectLine(
-          node, x, y, portId);
-    }
-    else {
-      return window.cyNodeShapes[render.getNodeShape(node)].intersectLine(
-          node._private.position.x,
-          node._private.position.y,
-          node.outerWidth(),
-          node.outerHeight(),
-          x, //halfPointX,
-          y, //halfPointY
-          node._private.style["border-width"].pxValue / 2
-          );
-    }
-  };
+//  $$.sbgn.intersetLineSelection = function (render, node, x, y, portId) {
+//    //TODO: do it for all classes in sbgn, create a sbgn class array to check
+//    if (tempSbgnShapes[render.getNodeShape(node)]) {
+//      return window.cyNodeShapes[render.getNodeShape(node)].intersectLine(
+//          node, x, y, portId);
+//    }
+//    else {
+//      return window.cyNodeShapes[render.getNodeShape(node)].intersectLine(
+//          node._private.position.x,
+//          node._private.position.y,
+//          node.outerWidth(),
+//          node.outerHeight(),
+//          x, //halfPointX,
+//          y, //halfPointY
+//          node._private.style["border-width"].pxValue / 2
+//          );
+//    }
+//  };
   
   //This is a temprorary function written for testing purpose and will be deleted 
   $$.sbgn.tempFcn = function(render, node){
