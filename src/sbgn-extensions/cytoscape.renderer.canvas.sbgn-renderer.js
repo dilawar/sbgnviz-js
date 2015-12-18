@@ -303,12 +303,10 @@
 
         $$.sbgn.drawStateAndInfos(node, context, centerX, centerY);
       },
-      drawPath: function (context, node) {
-      },
       intersectLine: function (node, x, y, portId) {
         var centerX = node._private.position.x;
         var centerY = node._private.position.y;
-        
+
         var width = node.width();
         var height = node.height();
         var padding = node._private.style["border-width"].value / 2;
@@ -337,8 +335,32 @@
 
         return $$.sbgn.closestIntersectionPoint([x, y], intersections);
       },
-      intersectBox: window.cyNodeShapes["ellipse"].intersectBox,
-      checkPoint: window.cyNodeShapes["ellipse"].checkPoint
+      checkPoint: function (x, y, node, threshold) {
+        var centerX = node._private.position.x;
+        var centerY = node._private.position.y;
+        
+        var width = node.width();
+        var height = node.height();
+        var padding = node._private.style["border-width"].pxValue / 2;
+        var multimerPadding = window.cyNodeShapes["simple chemical"].multimerPadding;
+
+        var nodeCheckPoint = window.cyNodeShapes["roundrectangle"].checkPoint(x, y,
+                padding, width, height,
+                centerX, centerY);
+
+        var stateAndInfoCheckPoint = $$.sbgn.checkPointStateAndInfoBoxes(x, y, node,
+                threshold);
+
+        //check whether sbgn class includes multimer substring or not
+        var multimerCheckPoint = false;
+        if ($$.sbgn.isMultimer(node)) {
+          multimerCheckPoint = window.cyNodeShapes["ellipse"].checkPoint(x, y,
+                  padding, width, height,
+                  centerX + multimerPadding, centerY + multimerPadding);
+        }
+
+        return nodeCheckPoint || stateAndInfoCheckPoint || multimerCheckPoint;
+      }
     };
 
     window.cyNodeShapes["macromolecule"] = {
@@ -1213,6 +1235,18 @@
     var tempSbgnShapes = {
       'macromolecule': true,
       'nucleic acid feature': true,
+      'simple chemical': true
+    };
+
+    if (tempSbgnShapes[render.getNodeShape(node)]) {
+      return true;
+    }
+
+    return false;
+  }
+
+  $$.sbgn.tempFcnCheckPoint = function (render, node) {
+    var tempSbgnShapes = {
       'simple chemical': true
     };
 
