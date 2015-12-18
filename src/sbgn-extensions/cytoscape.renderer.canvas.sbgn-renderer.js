@@ -305,7 +305,38 @@
       },
       drawPath: function (context, node) {
       },
-      intersectLine: window.cyNodeShapes["ellipse"].intersectLine,
+      intersectLine: function (node, x, y, portId) {
+        var centerX = node._private.position.x;
+        var centerY = node._private.position.y;
+        
+        var width = node.width();
+        var height = node.height();
+        var padding = node._private.style["border-width"].value / 2;
+        var multimerPadding = window.cyNodeShapes["simple chemical"].multimerPadding;
+
+        var portIntersection = $$.sbgn.intersectLinePorts(node, x, y, portId);
+        if (portIntersection.length > 0) {
+          return portIntersection;
+        }
+
+        var stateAndInfoIntersectLines = $$.sbgn.intersectLineStateAndInfoBoxes(
+                node, x, y);
+
+        var nodeIntersectLines = window.cyNodeShapes["ellipse"].intersectLine(
+                centerX, centerY, width, height, x, y, padding);
+
+        //check whether sbgn class includes multimer substring or not
+        var multimerIntersectionLines = [];
+        if ($$.sbgn.isMultimer(node)) {
+          multimerIntersectionLines = window.cyNodeShapes["ellipse"].intersectLine(
+                  centerX + multimerPadding, centerY + multimerPadding, width,
+                  height, x, y, padding);
+        }
+
+        var intersections = stateAndInfoIntersectLines.concat(nodeIntersectLines, multimerIntersectionLines);
+
+        return $$.sbgn.closestIntersectionPoint([x, y], intersections);
+      },
       intersectBox: window.cyNodeShapes["ellipse"].intersectBox,
       checkPoint: window.cyNodeShapes["ellipse"].checkPoint
     };
@@ -1080,6 +1111,41 @@
     return []; // if nothing
   };
 
+  $$.sbgn.intersectLineEllipse = function (
+          x1, y1, x2, y2, centerX, centerY, width, height, padding) {
+
+    var w = width / 2 + padding;
+    var h = height / 2 + padding;
+    var an = centerX;
+    var bn = centerY;
+
+    var d = [x2 - x1, y2 - y1];
+
+    var m = d[1] / d[0];
+    var n = -1 * m * x2 + y2;
+    var a = h * h + w * w * m * m;
+    var b = -2 * an * h * h + 2 * m * n * w * w - 2 * bn * m * w * w;
+    var c = an * an * h * h + n * n * w * w - 2 * bn * w * w * n +
+            bn * bn * w * w - h * h * w * w;
+
+    var discriminant = b * b - 4 * a * c;
+
+    if (discriminant < 0) {
+      return [];
+    }
+
+    var t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+    var t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+
+    var xMin = Math.min(t1, t2);
+    var xMax = Math.max(t1, t2);
+
+    var yMin = m * xMin - m * x2 + y2;
+    var yMax = m * xMax - m * x2 + y2;
+
+    return [xMin, yMin, xMax, yMax];
+  };
+
   $$.sbgn.intersectLineStateAndInfoBoxes = function (node, x, y) {
     var centerX = node._private.position.x;
     var centerY = node._private.position.y;
@@ -1146,7 +1212,8 @@
   $$.sbgn.tempFcn = function (render, node) {
     var tempSbgnShapes = {
       'macromolecule': true,
-      'nucleic acid feature': true
+      'nucleic acid feature': true,
+      'simple chemical': true
     };
 
     if (tempSbgnShapes[render.getNodeShape(node)]) {
