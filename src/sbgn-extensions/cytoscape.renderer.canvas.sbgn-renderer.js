@@ -428,8 +428,6 @@
         var padding = node._private.style["border-width"].value;
         var cloneMarker = node._private.data.sbgnclonemarker;
 
-        $$.sbgn.forceOpacityToOne(node, context);
-
         if ($$.sbgn.isMultimer(node)) {
           //add multimer shape
           $$.sbgn.drawSimpleChemical(context, centerX + multimerPadding,
