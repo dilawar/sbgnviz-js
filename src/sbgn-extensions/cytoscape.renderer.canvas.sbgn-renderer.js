@@ -11,6 +11,52 @@
   $$.sbgn = {
   };
 
+  $$.sbgn.drawStateText = function (context, textProp) {
+    var stateValue = textProp.state.value;
+    var stateVariable = textProp.state.variable;
+
+    var stateLabel = stateValue + (stateVariable
+            ? "@" + stateVariable
+            : "");
+
+    var fontSize = parseInt(textProp.height / 1.5);
+
+    textProp.font = fontSize + "px Arial";
+    textProp.label = stateLabel;
+    textProp.color = "#0f0f0f";
+    $$.sbgn.drawText(context, textProp);
+  };
+
+  $$.sbgn.drawInfoText = function (context, textProp) {
+    var fontSize = parseInt(textProp.height / 1.5);
+    textProp.font = fontSize + "px Arial";
+    textProp.color = "#0f0f0f";
+    $$.sbgn.drawText(context, textProp);
+  };
+
+  $$.sbgn.drawText = function (context, textProp, truncate) {
+    var oldFont = context.font;
+    context.font = textProp.font;
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    var oldStyle = context.fillStyle;
+    context.fillStyle = textProp.color;
+    var oldOpacity = context.globalAlpha;
+    context.globalAlpha = textProp.opacity;
+    var text;
+    if (truncate == false) {
+      text = textProp.label;
+    }
+    else {
+      text = truncateText(textProp, context.font);
+    }
+    context.fillText(text, textProp.centerX, textProp.centerY);
+    context.fillStyle = oldStyle;
+    context.font = oldFont;
+    context.globalAlpha = oldOpacity;
+    //context.stroke();
+  };
+
   $$.sbgn.drawExpandCollapseBoxes = function (node, context) {
     var children = node.children();
     var collapsedChildren = node._private.data.collapsedChildren;
@@ -105,7 +151,7 @@
 
         context.fill();
         textProp.state = state.state;
-//        $$.sbgn.drawStateText(context, textProp);
+        $$.sbgn.drawStateText(context, textProp);
 
         context.stroke();
 
@@ -119,7 +165,7 @@
         context.fill();
 
         textProp.label = state.label.text;
-//        $$.sbgn.drawInfoText(context, textProp);
+        $$.sbgn.drawInfoText(context, textProp);
 
         context.stroke();
       }
@@ -409,10 +455,11 @@
                 width - padding, height - padding, cloneMarker, false,
                 node._private.style['background-opacity'].value);
 
-        var nodeProp = {'label': label, 'centerX': centerX, 'centerY': centerY,
-          'opacity': node._private.style['text-opacity'].value, 'width': node.width(), 'height': node.height()};
+//        var nodeProp = {'label': label, 'centerX': centerX, 'centerY': centerY,
+//          'opacity': node._private.style['text-opacity'].value, 'width': node.width(), 'height': node.height()};
 //        $$.sbgn.drawDynamicLabelText(context, nodeProp);
-
+        
+        $$.sbgn.forceOpacityToOne(node, context);
         $$.sbgn.drawStateAndInfos(node, context, centerX, centerY);
       },
       intersectLine: function (node, x, y, portId) {
@@ -488,8 +535,6 @@
         var cloneMarker = node._private.data.sbgnclonemarker;
         var padding = node._private.style["border-width"].value;
 
-        $$.sbgn.forceOpacityToOne(node, context);
-
         //check whether sbgn class includes multimer substring or not
         if ($$.sbgn.isMultimer(node)) {
           //add multimer shape
@@ -518,11 +563,12 @@
         $$.sbgn.cloneMarker.macromolecule(context, centerX, centerY,
                 width, height, cloneMarker, false,
                 node._private.style['background-opacity'].value);
-
+        
+        $$.sbgn.forceOpacityToOne(node, context);
         $$.sbgn.drawStateAndInfos(node, context, centerX, centerY);
 
-        var nodeProp = {'label': label, 'centerX': centerX, 'centerY': centerY,
-          'opacity': node._private.style['text-opacity'].value, 'width': node.width(), 'height': node.height()};
+//        var nodeProp = {'label': label, 'centerX': centerX, 'centerY': centerY,
+//          'opacity': node._private.style['text-opacity'].value, 'width': node.width(), 'height': node.height()};
       },
       intersectLine: function (node, x, y, portId) {
         var centerX = node._private.position.x;
@@ -723,8 +769,8 @@
                 width, height, cloneMarker, false,
                 node._private.style['background-opacity'].value);
 
-        var nodeProp = {'label': label, 'centerX': centerX, 'centerY': centerY,
-          'opacity': node._private.style['text-opacity'].value, 'width': node.width(), 'height': node.height()};
+//        var nodeProp = {'label': label, 'centerX': centerX, 'centerY': centerY,
+//          'opacity': node._private.style['text-opacity'].value, 'width': node.width(), 'height': node.height()};
 
 //        $$.sbgn.drawDynamicLabelText(context, nodeProp);
         $$.sbgn.forceOpacityToOne(node, context);
