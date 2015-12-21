@@ -4,5 +4,3 @@ var sbgnStyleRules = {
   'fit-labels-to-nodes': 'true',
   'incremental-layout-after-expand-collapse': 'true'
 };
-
-
