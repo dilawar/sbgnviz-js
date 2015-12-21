@@ -37,8 +37,8 @@
     var lineSize = 8;
     var startOffset = 5;
     var diff = (rectSize - lineSize) / 2;
-    node._private.data.expandcollapseStartX = node._private.position.x - node.width() / 2 + startOffset;
-    node._private.data.expandcollapseStartY = node._private.position.y - node.height() / 2 + startOffset;
+    node._private.data.expandcollapseStartX = node._private.position.x - node.outerWidth() / 2 + startOffset;
+    node._private.data.expandcollapseStartY = node._private.position.y - node.outerHeight() / 2 + startOffset;
     node._private.data.expandcollapseEndX = node._private.data.expandcollapseStartX + rectSize;
     node._private.data.expandcollapseEndY = node._private.data.expandcollapseStartY + rectSize;
 
