@@ -1356,34 +1356,17 @@
 //    }
 //  };
 
-  //This is a temprorary function written for testing purpose and will be deleted 
-  $$.sbgn.tempFcn = function (render, node) {
-    var tempSbgnShapes = {
+  $$.sbgn.totallyOverridenNodeShapes = function (render, node) {
+    var shapes = {
       'macromolecule': true,
       'nucleic acid feature': true,
       'simple chemical': true
     };
 
-    if (tempSbgnShapes[render.getNodeShape(node)]) {
+    if (shapes[render.getNodeShape(node)]) {
       return true;
     }
 
     return false;
-  }
-
-  $$.sbgn.tempFcnCheckPoint = function (render, node) {
-    var tempSbgnShapes = {
-      'simple chemical': true,
-      'macromolecule': true,
-      'nucleic acid feature': true
-    };
-
-    if (tempSbgnShapes[render.getNodeShape(node)]) {
-      return true;
-    }
-
-    return false;
-  }
-
-
+  };
 })(cytoscape);
