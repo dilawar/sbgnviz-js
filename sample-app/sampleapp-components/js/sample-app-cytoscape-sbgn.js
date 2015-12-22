@@ -681,12 +681,18 @@ var refreshPaddings = function () {
   if (calc_padding < 15) {
     calc_padding = 15;
   }
-
-  var complexesAndCompartments = cy.$("node[sbgnclass='complex'], node[sbgnclass='compartment']");
-  complexesAndCompartments.css('padding-left', calc_padding);
-  complexesAndCompartments.css('padding-right', calc_padding);
-  complexesAndCompartments.css('padding-top', calc_padding);
-  complexesAndCompartments.css('padding-bottom', calc_padding);
+  
+  nodes.css('padding-left', 0);
+  nodes.css('padding-right', 0);
+  nodes.css('padding-top', 0);
+  nodes.css('padding-bottom', 0);
+  
+  var compounds = nodes.filter('$node > node');
+  
+  compounds.css('padding-left', calc_padding);
+  compounds.css('padding-right', calc_padding);
+  compounds.css('padding-top', calc_padding);
+  compounds.css('padding-bottom', calc_padding);
   //To refresh the nodes on the screen apply the preset layout
   makePresetLayout();
 };

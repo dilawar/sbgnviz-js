@@ -186,7 +186,8 @@ var expandCollapseUtilities = {
       if (node._private.data.sbgnclass == "complex") {
         node.removeStyle('content');
       }
-
+      
+      refreshPaddings();
       //return the node to undo the operation
       return node;
     }
@@ -222,7 +223,7 @@ var expandCollapseUtilities = {
       }
       this.removeChildren(node, node);
       node.addClass('collapsed');
-
+      refreshPaddings();
       //return the node to undo the operation
       return node;
     }
