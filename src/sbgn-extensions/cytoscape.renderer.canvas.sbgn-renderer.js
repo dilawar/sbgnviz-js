@@ -457,8 +457,10 @@
 //          'opacity': node._private.style['text-opacity'].value, 'width': node.width(), 'height': node.height()};
 //        $$.sbgn.drawDynamicLabelText(context, nodeProp);
         
+        var oldStyle = context.fillStyle;
         $$.sbgn.forceOpacityToOne(node, context);
         $$.sbgn.drawStateAndInfos(node, context, centerX, centerY);
+        context.fillStyle = oldStyle;
       },
       intersectLine: function (node, x, y, portId) {
         var centerX = node._private.position.x;
@@ -562,8 +564,10 @@
                 width, height, cloneMarker, false,
                 node._private.style['background-opacity'].value);
         
+        var oldStyle = context.fillStyle;
         $$.sbgn.forceOpacityToOne(node, context);
         $$.sbgn.drawStateAndInfos(node, context, centerX, centerY);
+        context.fillStyle = oldStyle;
 
 //        var nodeProp = {'label': label, 'centerX': centerX, 'centerY': centerY,
 //          'opacity': node._private.style['text-opacity'].value, 'width': node.width(), 'height': node.height()};
@@ -771,8 +775,10 @@
 //          'opacity': node._private.style['text-opacity'].value, 'width': node.width(), 'height': node.height()};
 
 //        $$.sbgn.drawDynamicLabelText(context, nodeProp);
+        var oldStyle = context.fillStyle;
         $$.sbgn.forceOpacityToOne(node, context);
         $$.sbgn.drawStateAndInfos(node, context, centerX, centerY);
+        context.fillStyle = oldStyle;
       },
       drawPath: function (context, node) {
 
