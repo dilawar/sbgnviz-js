@@ -742,9 +742,9 @@ var getCyShape = function (ele) {
   if ( shape == 'compartment') {
     return 'roundrectangle';
   }
-  if (shape == 'complex') {
-    return 'roundrectangle';
-  }
+//  if (shape == 'complex') {
+//    return 'roundrectangle';
+//  }
   if (shape == 'association' || shape == 'unspecified entity') {
     return 'ellipse';
   }
@@ -758,7 +758,7 @@ var getCyShape = function (ele) {
     return 'polygon';
   }
   if(shape == 'source and sink' || shape == 'nucleic acid feature' || shape == 'dissociation'
-          || shape == 'macromolecule' || shape == 'simple chemical'){
+          || shape == 'macromolecule' || shape == 'simple chemical' || shape == 'complex'){
     return shape; 
   }
   return 'ellipse';
