@@ -23,7 +23,7 @@
       var state = stateAndInfos[i];
       var stateWidth = state.bbox.w;
       var stateHeight = state.bbox.h;
-      var stateLabel = state.state.value;
+//      var stateLabel = state.state.value;
       var relativeYPos = state.bbox.y;
       var stateCenterX, stateCenterY;
 
@@ -40,16 +40,18 @@
             $$.sbgn.drawEllipse(context,
                     stateCenterX, stateCenterY,
                     stateWidth, stateHeight);
-
+            context.fill();
+            
             textProp.state = state.state;
             $$.sbgn.drawStateText(context, textProp);
           }
           else if (state.clazz == "unit of information") {//draw rectangle
-            renderer.drawRoundRectangle(context,
+            window.cyRenderer.drawRoundRectanglePath(context,
                     stateCenterX, stateCenterY,
                     stateWidth, stateHeight,
                     10);
-
+            context.fill();
+            
             textProp.label = state.label.text;
             $$.sbgn.drawInfoText(context, textProp);
           }
@@ -69,15 +71,18 @@
             $$.sbgn.drawEllipse(context,
                     stateCenterX, stateCenterY,
                     stateWidth, stateHeight);
-
+            context.fill();
+            
             textProp.state = state.state;
             $$.sbgn.drawStateText(context, textProp);
           }
           else if (state.clazz == "unit of information") {//draw rectangle
-            renderer.drawRoundRectangle(context,
+            window.cyRenderer.drawRoundRectanglePath(context,
                     stateCenterX, stateCenterY,
                     stateWidth, stateHeight,
                     10);
+            context.fill();
+            
             textProp.label = state.label.text;
             $$.sbgn.drawInfoText(context, textProp);
           }
@@ -164,8 +169,8 @@
     var lineSize = 8;
     var startOffset = 5;
     var diff = (rectSize - lineSize) / 2;
-    var width = hasChildren?node.outerWidth():node.width();
-    var height = hasChildren?node.outerHeight():node.height();
+    var width = hasChildren ? node.outerWidth() : node.width();
+    var height = hasChildren ? node.outerHeight() : node.height();
     node._private.data.expandcollapseStartX = node._private.position.x - width / 2 + startOffset;
     node._private.data.expandcollapseStartY = node._private.position.y - height / 2 + startOffset;
     node._private.data.expandcollapseEndX = node._private.data.expandcollapseStartX + rectSize;
@@ -764,8 +769,8 @@
       cornerLength: 12,
       draw: function (context, node) {
         var hasChildren = node.children().length > 0;
-        var width = hasChildren?node.outerWidth():node.width();
-        var height = hasChildren?node.outerHeight():node.height();
+        var width = hasChildren ? node.outerWidth() : node.width();
+        var height = hasChildren ? node.outerHeight() : node.height();
         var centerX = node._private.position.x;
         var centerY = node._private.position.y;
         var stateAndInfos = node._private.data.sbgnstatesandinfos;
@@ -780,11 +785,11 @@
         //check whether sbgn class includes multimer substring or not
         if ($$.sbgn.isMultimer(node)) {
           //add multimer shape
-          window.cyRenderer.drawPolygon(context,
+          window.cyRenderer.drawPolygonPath(context,
                   centerX + multimerPadding, centerY + multimerPadding,
                   width, height, window.cyNodeShapes["complex"].points);
           context.fill();
-          
+
           context.stroke();
 
           $$.sbgn.cloneMarker.complex(context,
@@ -811,82 +816,84 @@
         $$.sbgn.drawComplexStateAndInfo(context, node, stateAndInfos, centerX, centerY, width, height);
         context.fillStyle = oldStyle;
       },
-      intersectLine: window.cyNodeShapes["roundrectangle"].intersectLine,
-      checkPoint: window.cyNodeShapes["roundrectangle"].checkPoint
-//      intersectLine: function (node, x, y, portId) {
-//        var centerX = node._private.position.x;
-//        var centerY = node._private.position.y;
-//        var width = node.width();
-//        var height = node.height();
-//        var padding = node._private.style["border-width"].pxValue / 2;
-//        var multimerPadding = nodeShapes["complex"].multimerPadding;
-//        var cornerLength = nodeShapes["complex"].cornerLength;
-//
-//        var portIntersection = $$.sbgn.intersectLinePorts(node, x, y, portId);
-//        if (portIntersection.length > 0) {
-//          return portIntersection;
-//        }
-//
-//        nodeShapes["complex"].points = $$.sbgn.generateComplexShapePoints(cornerLength,
-//                width, height);
-//
-//        var stateAndInfoIntersectLines = $$.sbgn.intersectLineStateAndInfoBoxes(
-//                node, x, y);
-//
-//        var nodeIntersectLines = $$.math.polygonIntersectLine(
-//                x, y,
-//                nodeShapes["complex"].points,
-//                centerX,
-//                centerY,
-//                width / 2, height / 2,
-//                padding);
-//
-//        //check whether sbgn class includes multimer substring or not
-//        var multimerIntersectionLines = [];
-//        if ($$.sbgn.isMultimer(node)) {
-//          multimerIntersectionLines = $$.math.polygonIntersectLine(
-//                  x, y,
-//                  nodeShapes["complex"].points,
-//                  centerX + multimerPadding,
-//                  centerY + multimerPadding,
-//                  width / 2, height / 2,
-//                  padding);
-//        }
-//
-//        var intersections = stateAndInfoIntersectLines.concat(nodeIntersectLines, multimerIntersectionLines);
-//
-//        return $$.sbgn.closestIntersectionPoint([x, y], intersections);
-//      },
-//      checkPoint: function (x, y, node, threshold) {
-//        var centerX = node._private.position.x;
-//        var centerY = node._private.position.y;
-//        var width = node.width() + threshold;
-//        var height = node.height() + threshold;
-//        var padding = node._private.style["border-width"].pxValue / 2;
-//        var multimerPadding = nodeShapes["complex"].multimerPadding;
-//        var cornerLength = nodeShapes["complex"].cornerLength;
-//
-//        nodeShapes["complex"].points = $$.sbgn.generateComplexShapePoints(cornerLength,
-//                width, height);
-//
-//        var nodeCheckPoint = $$.math.pointInsidePolygon(x, y, nodeShapes["complex"].points,
-//                centerX, centerY, width, height, [0, -1], padding);
-//
-//        var stateAndInfoCheckPoint = $$.sbgn.checkPointStateAndInfoBoxes(x, y, node,
-//                threshold);
-//
-//        //check whether sbgn class includes multimer substring or not
-//        var multimerCheckPoint = false;
-//        if ($$.sbgn.isMultimer(node)) {
-//          multimerCheckPoint = $$.math.pointInsidePolygon(x, y,
-//                  nodeShapes["complex"].points,
-//                  centerX + multimerPadding, centerY + multimerPadding,
-//                  width, height, [0, -1], padding);
-//
-//        }
-//
-//        return nodeCheckPoint || stateAndInfoCheckPoint || multimerCheckPoint;
-//      }
+//      intersectLine: window.cyNodeShapes["roundrectangle"].intersectLine,
+//      checkPoint: window.cyNodeShapes["roundrectangle"].checkPoint
+      intersectLine: function (node, x, y, portId) {
+        var centerX = node._private.position.x;
+        var centerY = node._private.position.y;
+        var hasChildren = node.children().length > 0;
+        var width = hasChildren ? node.outerWidth() : node.width();
+        var height = hasChildren ? node.outerHeight() : node.height();
+        var padding = node._private.style["border-width"].pxValue / 2;
+        var multimerPadding = window.cyNodeShapes["complex"].multimerPadding;
+        var cornerLength = window.cyNodeShapes["complex"].cornerLength;
+
+        var portIntersection = $$.sbgn.intersectLinePorts(node, x, y, portId);
+        if (portIntersection.length > 0) {
+          return portIntersection;
+        }
+
+        window.cyNodeShapes["complex"].points = $$.sbgn.generateComplexShapePoints(cornerLength,
+                width, height);
+
+        var stateAndInfoIntersectLines = $$.sbgn.intersectLineStateAndInfoBoxes(
+                node, x, y);
+
+        var nodeIntersectLines = window.cyMath.polygonIntersectLine(
+                x, y,
+                window.cyNodeShapes["complex"].points,
+                centerX,
+                centerY,
+                width / 2, height / 2,
+                padding);
+
+        //check whether sbgn class includes multimer substring or not
+        var multimerIntersectionLines = [];
+        if ($$.sbgn.isMultimer(node)) {
+          multimerIntersectionLines = window.cyMath.polygonIntersectLine(
+                  x, y,
+                  window.cyNodeShapes["complex"].points,
+                  centerX + multimerPadding,
+                  centerY + multimerPadding,
+                  width / 2, height / 2,
+                  padding);
+        }
+
+        var intersections = stateAndInfoIntersectLines.concat(nodeIntersectLines, multimerIntersectionLines);
+
+        return $$.sbgn.closestIntersectionPoint([x, y], intersections);
+      },
+      checkPoint: function (x, y, node, threshold) {
+        var centerX = node._private.position.x;
+        var centerY = node._private.position.y;
+        var hasChildren = node.children().length > 0;
+        var width = (hasChildren ? node.outerWidth() : node.width()) + threshold;
+        var height = (hasChildren ? node.outerHeight() : node.height()) + threshold;
+        var padding = node._private.style["border-width"].pxValue / 2;
+        var multimerPadding = window.cyNodeShapes["complex"].multimerPadding;
+        var cornerLength = window.cyNodeShapes["complex"].cornerLength;
+
+        window.cyNodeShapes["complex"].points = $$.sbgn.generateComplexShapePoints(cornerLength,
+                width, height);
+
+        var nodeCheckPoint = window.cyMath.pointInsidePolygon(x, y, window.cyNodeShapes["complex"].points,
+                centerX, centerY, width, height, [0, -1], padding);
+
+        var stateAndInfoCheckPoint = $$.sbgn.checkPointStateAndInfoBoxes(x, y, node,
+                threshold);
+
+        //check whether sbgn class includes multimer substring or not
+        var multimerCheckPoint = false;
+        if ($$.sbgn.isMultimer(node)) {
+          multimerCheckPoint = window.cyMath.pointInsidePolygon(x, y,
+                  window.cyNodeShapes["complex"].points,
+                  centerX + multimerPadding, centerY + multimerPadding,
+                  width, height, [0, -1], padding);
+
+        }
+
+        return nodeCheckPoint || stateAndInfoCheckPoint || multimerCheckPoint;
+      }
     };
 
     window.cyNodeShapes["nucleic acid feature"] = {
@@ -1629,7 +1636,8 @@
     var shapes = {
       'macromolecule': true,
       'nucleic acid feature': true,
-      'simple chemical': true
+      'simple chemical': true,
+      'complex': true
     };
 
     if (shapes[render.getNodeShape(node)]) {
