@@ -13,7 +13,10 @@
 
   $$.sbgn.drawComplexStateAndInfo = function (context, node, stateAndInfos,
           centerX, centerY, width, height) {
-            
+
+    //This is a temporary workaround
+    $$.sbgn.drawEllipse(context, centerX, centerY, 0, 0);
+    
     var upWidth = 0, downWidth = 0;
     var boxPadding = 10, betweenBoxPadding = 5;
     var beginPosY = height / 2, beginPosX = width / 2;
