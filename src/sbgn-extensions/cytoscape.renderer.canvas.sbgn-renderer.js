@@ -13,6 +13,7 @@
 
   $$.sbgn.drawComplexStateAndInfo = function (context, node, stateAndInfos,
           centerX, centerY, width, height) {
+            
     var upWidth = 0, downWidth = 0;
     var boxPadding = 10, betweenBoxPadding = 5;
     var beginPosY = height / 2, beginPosX = width / 2;
@@ -90,6 +91,9 @@
         downWidth = downWidth + width + boxPadding;
       }
       context.stroke();
+
+      //This is a temporary workaround
+      $$.sbgn.drawEllipse(context, centerX, centerY, 0, 0);
 
       //update new state and info position(relative to node center)
       state.bbox.x = (stateCenterX - centerX) * 100 / node.width();
@@ -258,6 +262,8 @@
         context.stroke();
       }
     }
+    //This is a temporary workaround
+    $$.sbgn.drawEllipse(context, centerX, centerY, 0, 0);
   };
 
   $$.sbgn.nucleicAcidCheckPoint = function (x, y, centerX, centerY, node, threshold, points, cornerRadius) {
