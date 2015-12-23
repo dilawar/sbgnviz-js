@@ -69,6 +69,34 @@ var isSpecialSBGNNodeClass = function (sbgnclass) {
   return false;
 };
 
+//checks if a node with the given sbgnclass can be cloned
+var canBeCloned = function(sbgnclass) {
+  sbgnclass = sbgnclass.replace(" multimer", "");
+  var list = {
+    'unspecified entity': true,
+    'macromolecule': true,
+    'complex': true,
+    'nucleic acid feature': true,
+    'simple chemical': true,
+    'perturbing agent': true
+  };
+  
+  return list[sbgnclass]?true:false;
+};
+
+//checks if a node with the given sbgnclass can become a multimer
+var canBeMultimer = function(sbgnclass) {
+  sbgnclass = sbgnclass.replace(" multimer", "");
+  var list = {
+    'macromolecule': true,
+    'complex': true,
+    'nucleic acid feature': true,
+    'simple chemical': true
+  };
+  
+  return list[sbgnclass]?true:false;
+};
+
 var getNodesData = function () {
   var nodesData = {};
   var nodes = cy.nodes();
@@ -311,15 +339,23 @@ var handleSBGNInspector = function () {
         html += "<tr><td colspan='2'><hr style='padding: 0px; margin-top: 15px; margin-bottom: 15px;' width='" + $("#sbgn-inspector").width() + "'></td></tr>";
         html += "<tr><td style='width: " + width + "px; text-align:right; padding-right: 5px;'>" + "<font size='2'>Units of Information</font>" + "</td>"
             + "<td id='inspector-unit-of-informations' style='padding-left: 5px; width: '" + width + "'></td></tr>";
-
+      }
+      var multimerCheck = canBeMultimer(selected.data('sbgnclass'));
+      var clonedCheck = canBeCloned(selected.data('sbgnclass'));
+      
+      if(multimerCheck || clonedCheck){
         html += "<tr><td colspan='2'><hr style='padding: 0px; margin-top: 15px; margin-bottom: 15px;' width='" + $("#sbgn-inspector").width() + "'></td></tr>";
+      }
+      
+      if(multimerCheck){
         html += "<tr><td style='width: " + width + "px; text-align:right; padding-right: 5px;'>" + "<font size='2'>Multimer</font>" + "</td>"
             + "<td style='padding-left: 5px; width: '" + width + "'><input type='checkbox' id='inspector-is-multimer'></td></tr>";
-
+      }
+      
+      if(clonedCheck){
         html += "<tr><td style='width: " + width + "px; text-align:right; padding-right: 5px;'>" + "<font size='2'>Cloned</font>" + "</td>"
             + "<td style='padding-left: 5px; width: '" + width + "'><input type='checkbox' id='inspector-is-clone-marker'></td></tr>";
       }
-
     }
     else {
       type = "edge";
@@ -351,9 +387,15 @@ var handleSBGNInspector = function () {
     if (type == "node") {
       if (isSpecialSBGNNodeClass(selected.data('sbgnclass'))) {
         fillInspectorStateAndInfos(selected, width);
+      }
+      
+      if (canBeMultimer(selected.data('sbgnclass'))) {
         if (selected.data('sbgnclass').endsWith(' multimer')) {
           $('#inspector-is-multimer').attr('checked', true);
         }
+      }
+      
+      if (canBeCloned(selected.data('sbgnclass'))) {
         if (selected.data('sbgnclonemarker')) {
           $('#inspector-is-clone-marker').attr('checked', true);
         }
@@ -909,7 +951,7 @@ var sbgnStyleSheet = cytoscape.stylesheet()
 //          'shape': 'data(sbgnclass)',
       'background-opacity': 0.5,
     })
-    .selector("node[?sbgnclonemarker][sbgnclass='pertubing agent'], node[?sbgnclonemarker][sbgnclass='unspecified entity']")
+    .selector("node[?sbgnclonemarker][sbgnclass='perturbing agent'], node[?sbgnclonemarker][sbgnclass='unspecified entity']")
     .css({
       'background-image': 'sampleapp-images/clone_bg.png',
       'background-position-x': '50%',
