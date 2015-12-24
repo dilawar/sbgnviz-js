@@ -822,7 +822,8 @@ var getCyShape = function (ele) {
 var getCyArrowShape = function (ele) {
   var sbgnclass = ele.data('sbgnclass');
   if (sbgnclass == 'necessary stimulation') {
-    return 'triangle-tee';
+    return 'necessary stimulation';
+//    return 'triangle-tee';
   }
   if (sbgnclass == 'inhibition') {
     return 'tee';

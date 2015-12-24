@@ -6,19 +6,20 @@
     'dissociation': true,
     'macromolecule': true,
     'simple chemical': true,
-    'unspecified entity': true
+    'unspecified entity': true,
+    'necessary stimulation': true
   };
 
   $$.sbgn = {
   };
-  
+
   $$.sbgn.cardinalityProperties = function () {
     return {
       boxLength: 13,
       distanceToNode: 25,
     };
   };
-  
+
   $$.sbgn.drawCardinalityText = function (context, textProp) {
     textProp.color = "#0f0f0f";
     textProp.font = "9px Arial";
@@ -90,7 +91,7 @@
 
   };
 
-  $$.sbgn.drawStraightLineCardinality = function(context, edge, pts, type) {
+  $$.sbgn.drawStraightLineCardinality = function (context, edge, pts, type) {
     context.moveTo(pts[0], pts[1]);
     context.lineTo(pts[2], pts[3]);
 
@@ -649,11 +650,23 @@
   window.cyStyfn.types.nodeShape.enums.push('macromolecule');
   window.cyStyfn.types.nodeShape.enums.push('simple chemical');
   window.cyStyfn.types.nodeShape.enums.push('unspecified entity');
-  
+
   window.cyStyfn.types.lineStyle.enums.push('consumption');
   window.cyStyfn.types.lineStyle.enums.push('production');
 
-  $$.sbgn.registerSbgnShapes = function () {
+  window.cyStyfn.types.arrowShape.enums.push('necessary stimulation');
+
+  $$.sbgn.registerSbgnArrowShapes = function () {
+    window.cyArrowShapes['necessary stimulation'] = jQuery.extend({}, window.cyArrowShapes['triangle-tee']);
+    window.cyArrowShapes['necessary stimulation'].pointsTee = [
+      -0.15, -0.37,
+      0.15, -0.37
+    ];
+  };
+
+  $$.sbgn.registerSbgnNodeShapes = function () {
+    window.cyArrowShapes['necessary stimulation'] = window.cyArrowShapes['triangle-tee'];
+
     window.cyNodeShapes["unspecified entity"] = {
       draw: function (context, node) {
         var centerX = node._private.position.x;
