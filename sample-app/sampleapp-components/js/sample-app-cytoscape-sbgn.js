@@ -1064,20 +1064,22 @@ var sbgnStyleSheet = cytoscape.stylesheet()
     })
     .selector("edge[sbgnclass='consumption']")
     .css({
-      'text-background-opacity': 1,
-      'text-background-color': 'white',
-      'text-background-shape': 'roundrectangle',
-      'text-border-color': '#000',
-      'text-border-width': 1,
-      'text-border-opacity': 1,
-      'label': function (ele) {
-        var cardinality = ele.data('sbgncardinality');
-        return cardinality == null || cardinality == 0 ? '' : cardinality;
-      }
+//      'text-background-opacity': 1,
+//      'text-background-color': 'white',
+//      'text-background-shape': 'roundrectangle',
+//      'text-border-color': '#000',
+//      'text-border-width': 1,
+//      'text-border-opacity': 1,
+//      'label': function (ele) {
+//        var cardinality = ele.data('sbgncardinality');
+//        return cardinality == null || cardinality == 0 ? '' : cardinality;
+//      }
+      'line-style': 'consumption'
     })
     .selector("edge[sbgnclass='production']")
     .css({
-      'target-arrow-fill': 'filled'
+      'target-arrow-fill': 'filled',
+      'line-style': 'production'
     })
     .selector("edge:selected")
     .css({
