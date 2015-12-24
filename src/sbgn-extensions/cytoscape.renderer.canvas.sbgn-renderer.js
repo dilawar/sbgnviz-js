@@ -5,7 +5,8 @@
     'complex': true,
     'dissociation': true,
     'macromolecule': true,
-    'simple chemical': true
+    'simple chemical': true,
+    'unspecified entity': true
   };
 
   $$.sbgn = {
@@ -16,7 +17,7 @@
 
     //This is a temporary workaround
     $$.sbgn.drawEllipse(context, centerX, centerY, 0, 0);
-    
+
     var upWidth = 0, downWidth = 0;
     var boxPadding = 10, betweenBoxPadding = 5;
     var beginPosY = height / 2, beginPosX = width / 2;
@@ -45,7 +46,7 @@
                     stateCenterX, stateCenterY,
                     stateWidth, stateHeight);
             context.fill();
-            
+
             textProp.state = state.state;
             $$.sbgn.drawStateText(context, textProp);
           }
@@ -55,7 +56,7 @@
                     stateWidth, stateHeight,
                     10);
             context.fill();
-            
+
             textProp.label = state.label.text;
             $$.sbgn.drawInfoText(context, textProp);
           }
@@ -76,7 +77,7 @@
                     stateCenterX, stateCenterY,
                     stateWidth, stateHeight);
             context.fill();
-            
+
             textProp.state = state.state;
             $$.sbgn.drawStateText(context, textProp);
           }
@@ -86,7 +87,7 @@
                     stateWidth, stateHeight,
                     10);
             context.fill();
-            
+
             textProp.label = state.label.text;
             $$.sbgn.drawInfoText(context, textProp);
           }
@@ -510,8 +511,73 @@
   window.cyStyfn.types.nodeShape.enums.push('dissociation');
   window.cyStyfn.types.nodeShape.enums.push('macromolecule');
   window.cyStyfn.types.nodeShape.enums.push('simple chemical');
+  window.cyStyfn.types.nodeShape.enums.push('unspecified entity');
 
   $$.sbgn.registerSbgnShapes = function () {
+    window.cyNodeShapes["unspecified entity"] = {
+      draw: function (context, node) {
+        var centerX = node._private.position.x;
+        var centerY = node._private.position.y;
+        
+        var width = node.width();
+        var height = node.height();
+        var sbgnClass = node._private.data.sbgnclass;
+        var label = node._private.data.sbgnlabel;
+        var cloneMarker = node._private.data.sbgnclonemarker;
+
+        $$.sbgn.drawEllipse(context, centerX, centerY, width, height);
+
+        context.stroke();
+        
+        $$.sbgn.cloneMarker.unspecifiedEntity(context, centerX, centerY,
+                width, height, cloneMarker,
+                node._private.style['background-opacity'].value);
+
+        $$.sbgn.forceOpacityToOne(node, context);
+        $$.sbgn.drawStateAndInfos(node, context, centerX, centerY);
+      },
+      intersectLine: function (node, x, y, portId) {
+        var centerX = node._private.position.x;
+        var centerY = node._private.position.y;
+        
+        var width = node.width();
+        var height = node.height();
+        var padding = node._private.style["border-width"].value / 2;
+
+        var portIntersection = $$.sbgn.intersectLinePorts(node, x, y, portId);
+        if (portIntersection.length > 0) {
+          return portIntersection;
+        }
+
+        var stateAndInfoIntersectLines = $$.sbgn.intersectLineStateAndInfoBoxes(
+                node, x, y);
+
+        var nodeIntersectLines = window.cyNodeShapes["ellipse"].intersectLine(centerX, centerY, width,
+                height, x, y, padding);
+
+        var intersections = stateAndInfoIntersectLines.concat(nodeIntersectLines);
+        return $$.sbgn.closestIntersectionPoint([x, y], intersections);
+
+      },
+      checkPoint: function (x, y, node, threshold) {
+        var centerX = node._private.position.x;
+        var centerY = node._private.position.y;
+        
+        var width = node.width();
+        var height = node.height();
+        var padding = node._private.style["border-width"].value / 2;
+
+        var nodeCheckPoint = window.cyNodeShapes["ellipse"].checkPoint(x, y,
+                padding, width, height,
+                centerX, centerY);
+
+        var stateAndInfoCheckPoint = $$.sbgn.checkPointStateAndInfoBoxes(x, y, node,
+                threshold);
+
+        return nodeCheckPoint || stateAndInfoCheckPoint;
+      }
+    };
+
     window.cyNodeShapes["simple chemical"] = {
       multimerPadding: 5,
       draw: function (context, node) {
@@ -1646,7 +1712,8 @@
       'macromolecule': true,
       'nucleic acid feature': true,
       'simple chemical': true,
-      'complex': true
+      'complex': true,
+      'unspecified entity': true
     };
 
     if (shapes[render.getNodeShape(node)]) {

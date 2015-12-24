@@ -446,7 +446,7 @@ var handleSBGNInspector = function () {
               .data('sbgnclonemarker', clonemarker?true:false);
         cy.endBatch();
         if(selected.data('sbgnclonemarker') == false){
-          selected.data('sbgnclonemarker', false);
+          selected._private.data.sbgnclonemarker = undefined;
         }
       });
 
@@ -799,10 +799,7 @@ var getCyShape = function (ele) {
   if (shape == 'compartment') {
     return 'roundrectangle';
   }
-//  if (shape == 'complex') {
-//    return 'roundrectangle';
-//  }
-  if (shape == 'association' || shape == 'unspecified entity') {
+  if (shape == 'association') {
     return 'ellipse';
   }
   if (shape == 'process' || shape == 'omitted process' || shape == 'uncertain process') {
@@ -815,7 +812,8 @@ var getCyShape = function (ele) {
     return 'polygon';
   }
   if (shape == 'source and sink' || shape == 'nucleic acid feature' || shape == 'dissociation'
-      || shape == 'macromolecule' || shape == 'simple chemical' || shape == 'complex') {
+      || shape == 'macromolecule' || shape == 'simple chemical' || shape == 'complex'
+      || shape == 'unspecified entity') {
     return shape;
   }
   return 'ellipse';
@@ -951,7 +949,7 @@ var sbgnStyleSheet = cytoscape.stylesheet()
 //          'shape': 'data(sbgnclass)',
       'background-opacity': 0.5,
     })
-    .selector("node[?sbgnclonemarker][sbgnclass='perturbing agent'], node[?sbgnclonemarker][sbgnclass='unspecified entity']")
+    .selector("node[?sbgnclonemarker][sbgnclass='perturbing agent']")
     .css({
       'background-image': 'sampleapp-images/clone_bg.png',
       'background-position-x': '50%',
