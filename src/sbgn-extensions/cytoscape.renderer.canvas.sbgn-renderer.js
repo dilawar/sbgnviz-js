@@ -1445,7 +1445,7 @@
     for (var i = 0; i < node._private.data.ports.length; i++) {
       var port = node._private.data.ports[i];
       if (portId == port.id) {
-        return $$.math.intersectLineEllipse(
+        return window.cyMath.intersectLineEllipse(
                 x, y, port.x + nodeX, port.y + nodeY, 1, 1);
       }
     }
