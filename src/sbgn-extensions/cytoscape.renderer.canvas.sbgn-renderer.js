@@ -628,7 +628,7 @@
       var port = node._private.data.ports[i];
       var portX = port.x + centerX;
       var portY = port.y + centerY;
-      var closestPoint = $$.math.intersectLineEllipse(
+      var closestPoint = window.cyMath.intersectLineEllipse(
               portX, portY, centerX, centerY, width / 2, height / 2);
       context.moveTo(portX, portY);
       context.lineTo(closestPoint[0], closestPoint[1]);
