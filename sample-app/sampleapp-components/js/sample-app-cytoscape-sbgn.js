@@ -843,6 +843,7 @@ var getCyArrowShape = function (ele) {
 var truncateText = function (textProp, font) {
   var context = document.createElement('canvas').getContext("2d");
   context.font = font;
+  
   var fitLabelsToNodes = (sbgnStyleRules['fit-labels-to-nodes'] == 'true');
 
   var text = (typeof textProp.label === 'undefined') ? "" : textProp.label;
@@ -935,7 +936,7 @@ var getDynamicLabelTextSize = function (ele) {
 //  dynamicLabelSizeCoefficient = dynamicLabelSizeCoefficient ? dynamicLabelSizeCoefficient : 1;
 
   var h = ele.data('height') ? ele.data('height') : ele.data('sbgnbbox').h;
-  var textHeight = parseInt(h) / 2.45 * dynamicLabelSizeCoefficient;
+  var textHeight = parseInt(h / 2.45) * dynamicLabelSizeCoefficient;
 
   return textHeight;
 };
