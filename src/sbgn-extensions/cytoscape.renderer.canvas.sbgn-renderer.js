@@ -9,6 +9,14 @@
     'unspecified entity': true,
     'necessary stimulation': true
   };
+  
+  var totallyOverridenNodeShapes = $$.totallyOverridenNodeShapes = {
+      'macromolecule': true,
+      'nucleic acid feature': true,
+      'simple chemical': true,
+      'complex': true,
+      'unspecified entity': true
+    };
 
   $$.sbgn = {
   };
@@ -1860,16 +1868,8 @@
 //    }
 //  };
 
-  $$.sbgn.totallyOverridenNodeShapes = function (render, node) {
-    var shapes = {
-      'macromolecule': true,
-      'nucleic acid feature': true,
-      'simple chemical': true,
-      'complex': true,
-      'unspecified entity': true
-    };
-
-    if (shapes[render.getNodeShape(node)]) {
+  $$.sbgn.isNodeShapeTotallyOverriden = function (render, node) {
+    if (totallyOverridenNodeShapes[render.getNodeShape(node)]) {
       return true;
     }
 
