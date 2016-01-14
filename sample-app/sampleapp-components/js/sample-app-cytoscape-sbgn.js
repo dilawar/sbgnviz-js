@@ -70,7 +70,7 @@ var isSpecialSBGNNodeClass = function (sbgnclass) {
 };
 
 //checks if a node with the given sbgnclass can be cloned
-var canBeCloned = function(sbgnclass) {
+var canBeCloned = function (sbgnclass) {
   sbgnclass = sbgnclass.replace(" multimer", "");
   var list = {
     'unspecified entity': true,
@@ -80,12 +80,12 @@ var canBeCloned = function(sbgnclass) {
     'simple chemical': true,
     'perturbing agent': true
   };
-  
-  return list[sbgnclass]?true:false;
+
+  return list[sbgnclass] ? true : false;
 };
 
 //checks if a node with the given sbgnclass can become a multimer
-var canBeMultimer = function(sbgnclass) {
+var canBeMultimer = function (sbgnclass) {
   sbgnclass = sbgnclass.replace(" multimer", "");
   var list = {
     'macromolecule': true,
@@ -93,8 +93,8 @@ var canBeMultimer = function(sbgnclass) {
     'nucleic acid feature': true,
     'simple chemical': true
   };
-  
-  return list[sbgnclass]?true:false;
+
+  return list[sbgnclass] ? true : false;
 };
 
 var getNodesData = function () {
@@ -342,17 +342,17 @@ var handleSBGNInspector = function () {
       }
       var multimerCheck = canBeMultimer(selected.data('sbgnclass'));
       var clonedCheck = canBeCloned(selected.data('sbgnclass'));
-      
-      if(multimerCheck || clonedCheck){
+
+      if (multimerCheck || clonedCheck) {
         html += "<tr><td colspan='2'><hr style='padding: 0px; margin-top: 15px; margin-bottom: 15px;' width='" + $("#sbgn-inspector").width() + "'></td></tr>";
       }
-      
-      if(multimerCheck){
+
+      if (multimerCheck) {
         html += "<tr><td style='width: " + width + "px; text-align:right; padding-right: 5px;'>" + "<font size='2'>Multimer</font>" + "</td>"
             + "<td style='padding-left: 5px; width: '" + width + "'><input type='checkbox' id='inspector-is-multimer'></td></tr>";
       }
-      
-      if(clonedCheck){
+
+      if (clonedCheck) {
         html += "<tr><td style='width: " + width + "px; text-align:right; padding-right: 5px;'>" + "<font size='2'>Cloned</font>" + "</td>"
             + "<td style='padding-left: 5px; width: '" + width + "'><input type='checkbox' id='inspector-is-clone-marker'></td></tr>";
       }
@@ -388,13 +388,13 @@ var handleSBGNInspector = function () {
       if (isSpecialSBGNNodeClass(selected.data('sbgnclass'))) {
         fillInspectorStateAndInfos(selected, width);
       }
-      
+
       if (canBeMultimer(selected.data('sbgnclass'))) {
         if (selected.data('sbgnclass').endsWith(' multimer')) {
           $('#inspector-is-multimer').attr('checked', true);
         }
       }
-      
+
       if (canBeCloned(selected.data('sbgnclass'))) {
         if (selected.data('sbgnclonemarker')) {
           $('#inspector-is-clone-marker').attr('checked', true);
@@ -443,9 +443,9 @@ var handleSBGNInspector = function () {
         //trigger the change in the node's background image
         cy.startBatch();
         selected
-              .data('sbgnclonemarker', clonemarker?true:false);
+            .data('sbgnclonemarker', clonemarker ? true : false);
         cy.endBatch();
-        if(selected.data('sbgnclonemarker') == false){
+        if (selected.data('sbgnclonemarker') == false) {
           selected._private.data.sbgnclonemarker = undefined;
         }
       });
@@ -843,7 +843,7 @@ var getCyArrowShape = function (ele) {
 var truncateText = function (textProp, font) {
   var context = document.createElement('canvas').getContext("2d");
   context.font = font;
-  
+
   var fitLabelsToNodes = (sbgnStyleRules['fit-labels-to-nodes'] == 'true');
 
   var text = (typeof textProp.label === 'undefined') ? "" : textProp.label;
@@ -1246,6 +1246,14 @@ var SBGNContainer = Backbone.View.extend({
       ready: function ()
       {
         window.cy = this;
+
+//        var edges = cy.edges();
+//        for (var i = 0; i < edges.length; i++) {
+//          var edge = edges[i];
+//          var result = sbgnBendPointUtilities.convertToRelativeBendPositions(edge);
+//          console.log(result.weights[0] + "\t" + result.weights[1] + "\t"
+//              + result.distances[0] + "\t" + result.distances[1] );
+//        }
 
         refreshPaddings();
         initilizeUnselectedDataOfElements();

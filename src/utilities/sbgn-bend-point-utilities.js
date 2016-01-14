@@ -1,23 +1,21 @@
 var sbgnBendPointUtilities = {
   //Get the clipping point of the node if it has an edge between another node centered on (x, y) point
   getClippingPoint: function (node, x, y) {
-    //Get the intersectLine function of this shape
-    var intersectLineFcn = window.cyNodeShapes[node.css('shape')].intersectLine;
     var intersect;//The return value of intersectLine function
 
     //Determine the parameters according to the possible number of parameters
-    if (intersectLineFcn.length == 4) {
-      intersect = intersectLineFcn(node, x, y);
+    if (window.cyNodeShapes[node.css('shape')].intersectLine.length == 4) {
+      intersect = window.cyNodeShapes[node.css('shape')].intersectLine(node, x, y);
     }
     else {
-      intersect = intersectLineFcn(
+      intersect = window.cyNodeShapes[node.css('shape')].intersectLine(
           node._private.position.x,
           node._private.position.y,
           node.width(),
           node.height(),
           x, //halfPointX,
           y, //halfPointY
-          node._private.style["border-width"].pxValue / 2);
+          node._private.style["border-width"].pfValue / 2);
     }
 
     return {
