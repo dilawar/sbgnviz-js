@@ -1035,16 +1035,16 @@ var sbgnStyleSheet = cytoscape.stylesheet()
       'source-arrow-color': '#555',
 //          'target-arrow-shape': 'data(sbgnclass)'
     })
-    .selector("edge[distances][weights]")
-    .css({
-      'curve-style': 'segments',
-      'segment-distances': function(ele){
-        return sbgnBendPointUtilities.getSegmentDistancesString(ele);
-      },
-      'segment-weights': function(ele){
-        return sbgnBendPointUtilities.getSegmentWeightsString(ele);
-      }
-    })
+//    .selector("edge[distances][weights]")
+//    .css({
+//      'curve-style': 'segments',
+//      'segment-distances': function(ele){
+//        return sbgnBendPointUtilities.getSegmentDistancesString(ele);
+//      },
+//      'segment-weights': function(ele){
+//        return sbgnBendPointUtilities.getSegmentWeightsString(ele);
+//      }
+//    })
     .selector("edge[sbgnclass]")
     .css({
       'target-arrow-shape': function (ele) {
