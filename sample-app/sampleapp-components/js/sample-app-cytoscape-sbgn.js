@@ -1359,6 +1359,9 @@ var SBGNContainer = Backbone.View.extend({
         editorActionsManager.reset();
         refreshUndoRedoButtonsStatus();
 
+//        cy.panzoom({
+//          // options here...
+//        });
         var panProps = ({
           fitPadding: 10
         });
