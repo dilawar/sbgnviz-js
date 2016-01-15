@@ -975,25 +975,6 @@ var sbgnStyleSheet = cytoscape.stylesheet()
         return getLabelTextSize(ele);
       }
     })
-//        .selector("node[sbgnclass='dissociation']")
-//        .css({
-////          'content': 'data(sbgnlabel)',
-//          'content': function (ele) {
-//            return getElementContent(ele);
-//          },
-//          'text-valign': 'center',
-//          'text-halign': 'center',
-//          'font-size': function (ele) {
-//            var h = ele.data('height') ? ele.data('height') : ele.data('sbgnbbox').h;
-//            return h * 0.8;
-//          },
-//          'font-style': 'normal',
-//          'font-weight': 'normal',
-//          'text-background-color': function (ele) {
-//            return ele.css('border-color');
-//          },
-//          'text-opacity': '0.5'
-//        })
     .selector("node[sbgnclass]")
     .css({
       'shape': function (ele) {
@@ -1053,6 +1034,16 @@ var sbgnStyleSheet = cytoscape.stylesheet()
       'target-arrow-color': '#555',
       'source-arrow-color': '#555',
 //          'target-arrow-shape': 'data(sbgnclass)'
+    })
+    .selector("edge[distances][weights]")
+    .css({
+      'curve-style': 'segments',
+      'segment-distances': function(ele){
+        return sbgnBendPointUtilities.getSegmentDistancesString(ele);
+      },
+      'segment-weights': function(ele){
+        return sbgnBendPointUtilities.getSegmentWeightsString(ele);
+      }
     })
     .selector("edge[sbgnclass]")
     .css({
@@ -1247,13 +1238,15 @@ var SBGNContainer = Backbone.View.extend({
       {
         window.cy = this;
 
-//        var edges = cy.edges();
-//        for (var i = 0; i < edges.length; i++) {
-//          var edge = edges[i];
-//          var result = sbgnBendPointUtilities.convertToRelativeBendPositions(edge);
-//          console.log(result.weights[0] + "\t" + result.weights[1] + "\t"
-//              + result.distances[0] + "\t" + result.distances[1] );
-//        }
+        var edges = cy.edges();
+//        console.log(edges.length);
+
+        for (var i = 0; i < edges.length; i++) {
+          var edge = edges[i];
+          var result = sbgnBendPointUtilities.convertToRelativeBendPositions(edge);
+          edge.data('weights', result.weights);
+          edge.data('distances', result.distances);
+        }
 
         refreshPaddings();
         initilizeUnselectedDataOfElements();

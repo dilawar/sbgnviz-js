@@ -72,18 +72,38 @@ var sbgnBendPointUtilities = {
     //output variables
     var weights = [];
     var distances = [];
-    
-    for(var i = 0; i < bendPoints.length; i++){
+
+    for (var i = 0; i < bendPoints.length; i++) {
       var bendPoint = bendPoints[i];
       var relativeBendPosition = this.convertToRelativeBendPosition(edge, bendPoint, clippingPointsAndTangents);
-      
+
       weights.push(relativeBendPosition.weight);
       distances.push(relativeBendPosition.distance);
     }
-    
+
     return {
       weights: weights,
       distances: distances
     };
+  },
+  getSegmentWeightsString: function (edge) {
+    var str = "";
+
+    var distances = edge.data('distances');
+    for (var i = 0; i < distances.length; i++) {
+      str = str + " " + distances[i];
+    }
+//    console.log(str);
+    return str;
+  },
+  getSegmentDistancesString: function (edge) {
+    var str = "";
+
+    var weights = edge.data('weights');
+    for (var i = 0; i < weights.length; i++) {
+      str = str + " " + weights[i];
+    }
+//    console.log(str);
+    return str;
   }
 };
