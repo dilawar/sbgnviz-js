@@ -2,13 +2,19 @@ var sbgnBendPointUtilities = {
   //Get the clipping point of the node if it has an edge between another node centered on (x, y) point
   getClippingPoint: function (node, x, y) {
     var intersect;//The return value of intersectLine function
-    console.log(node.css('shape'));
+    var shape = node.css('shape');//get the node shape
+    
+    if(shape === 'polygon'){
+        var points = node._private.style['shape-polygon-points'].value;
+        shape = window.cyNodeShapes.makePolygon( points ).name;
+    }
+   
     //Determine the parameters according to the possible number of parameters
-    if (window.cyNodeShapes[node.css('shape')].intersectLine.length == 4) {
-      intersect = window.cyNodeShapes[node.css('shape')].intersectLine(node, x, y);
+    if (window.cyNodeShapes[shape].intersectLine.length == 4) {
+      intersect = window.cyNodeShapes[shape].intersectLine(node, x, y);
     }
     else {
-      intersect = window.cyNodeShapes[node.css('shape')].intersectLine(
+      intersect = window.cyNodeShapes[shape].intersectLine(
           node._private.position.x,
           node._private.position.y,
           node.width(),
@@ -93,7 +99,7 @@ var sbgnBendPointUtilities = {
     for (var i = 0; i < distances.length; i++) {
       str = str + " " + distances[i];
     }
-    console.log(str);
+//    console.log(str);
     return str;
   },
   getSegmentWeightsString: function (edge) {
@@ -103,7 +109,7 @@ var sbgnBendPointUtilities = {
     for (var i = 0; i < weights.length; i++) {
       str = str + " " + weights[i];
     }
-    console.log(str);
+//    console.log(str);
     return str;
   }
 };
