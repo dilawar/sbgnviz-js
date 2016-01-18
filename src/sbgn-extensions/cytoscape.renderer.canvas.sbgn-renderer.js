@@ -43,6 +43,23 @@
     $$.sbgn.drawText(context, textProp, false);
   };
 
+  $$.sbgn.addPortReplacementIfAny = function (node, edgePort) {
+    var posX = node.position().x;
+    var posY = node.position().y;
+    if (typeof node._private.data.ports != 'undefined') {
+      for (var i = 0; i < node._private.data.ports.length; i++) {
+        var port = node._private.data.ports[i];
+        if (port.id == edgePort) {
+          posX = posX + port.x;
+          posY = posY + port.y;
+          break;
+        }
+      }
+    }
+    return {'x': posX, 'y': posY};
+  }
+  ;
+
   $$.sbgn.drawPortsToPolygonShape = function (context, node, points) {
     var width = node.width();
     var height = node.height();
