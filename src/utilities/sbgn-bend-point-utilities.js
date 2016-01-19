@@ -67,8 +67,8 @@ var sbgnBendPointUtilities = {
     var distance = Math.sqrt(Math.pow((intersectY - bendPoint.y), 2)
         + Math.pow((intersectX - bendPoint.x), 2));
     
-    if(weight < 0.1) weight = 0.05;
-    if(weight > 0.9) weight = 0.95;
+//    if(weight < 0.1) weight = 0.05;
+//    if(weight > 0.9) weight = 0.95;
     return {
       weight: weight,
       distance: distance
