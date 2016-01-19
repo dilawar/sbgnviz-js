@@ -23,7 +23,7 @@ var sbgnBendPointUtilities = {
           y, //halfPointY
           node._private.style["border-width"].pfValue / 2);
     }
-
+    
     return {
       x: intersect[0],
       y: intersect[1]
@@ -61,12 +61,14 @@ var sbgnBendPointUtilities = {
     var a2 = bendPoint.y - m2 * bendPoint.x;
 
     var intersectX = (a2 - a1) / (m1 - m2);
-    var intersectY = m1 * srcClippingPoint.x + a1;
+    var intersectY = m1 * intersectX + a1;
 
     var weight = (intersectX - srcClippingPoint.x) / (tgtClippingPoint.x - srcClippingPoint.x);
     var distance = Math.sqrt(Math.pow((intersectY - bendPoint.y), 2)
         + Math.pow((intersectX - bendPoint.x), 2));
-
+    
+    if(weight < 0.1) weight = 0.05;
+    if(weight > 0.9) weight = 0.95;
     return {
       weight: weight,
       distance: distance
@@ -86,7 +88,8 @@ var sbgnBendPointUtilities = {
       weights.push(relativeBendPosition.weight);
       distances.push(relativeBendPosition.distance);
     }
-
+//    weights = [0.2, 0.9];
+//    distances = [0, 0];
     return {
       weights: weights,
       distances: distances
