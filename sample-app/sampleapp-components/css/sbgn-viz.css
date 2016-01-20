@@ -142,7 +142,8 @@ body {
     border: 1px solid #ddd;
     height: 680px;
     width: 800px;
-    overflow: auto !important;
+    /*overflow: auto !important;*/
+    overflow: hidden;
     border-radius: 0.25em;
     /*float: left;*/
 }
