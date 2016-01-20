@@ -1,4 +1,29 @@
 var sbgnBendPointUtilities = {
+  //Get the direction of the line from source point to the target point
+  getLineDirection: function(srcPoint, tgtPoint){
+    if(srcPoint.y == tgtPoint.y && srcPoint.x < tgtPoint.x){
+      return 1;
+    }
+    if(srcPoint.y < tgtPoint.y && srcPoint.x < tgtPoint.x){
+      return 2;
+    }
+    if(srcPoint.y < tgtPoint.y && srcPoint.x == tgtPoint.x){
+      return 3;
+    }
+    if(srcPoint.y < tgtPoint.y && srcPoint.x > tgtPoint.x){
+      return 4;
+    }
+    if(srcPoint.y == tgtPoint.y && srcPoint.x > tgtPoint.x){
+      return 5;
+    }
+    if(srcPoint.y > tgtPoint.y && srcPoint.x > tgtPoint.x){
+      return 6;
+    }
+    if(srcPoint.y > tgtPoint.y && srcPoint.x == tgtPoint.x){
+      return 7;
+    }
+    return 8;//if srcPoint.y > tgtPoint.y and srcPoint.x < tgtPoint.x
+  },
   //Get the clipping point of the node if it has an edge between another node centered on (x, y) point
   getClippingPoint: function (node, x, y) {
     var intersect;//The return value of intersectLine function
@@ -63,10 +88,26 @@ var sbgnBendPointUtilities = {
     var intersectX = (a2 - a1) / (m1 - m2);
     var intersectY = m1 * intersectX + a1;
 
+    //Intersection point is the intersection of the lines passing through the nodes and
+    //passing through the bend point and perpendicular to the other line
+    var intersectionPoint = {
+      x: intersectX,
+      y: intersectY
+    };
+
     var weight = (intersectX - srcClippingPoint.x) / (tgtClippingPoint.x - srcClippingPoint.x);
     var distance = Math.sqrt(Math.pow((intersectY - bendPoint.y), 2)
         + Math.pow((intersectX - bendPoint.x), 2));
     
+    //Get the direction of the line form source clipping point to target clipping point
+    var direction1 = this.getLineDirection(srcClippingPoint, tgtClippingPoint);
+    //Get the direction of the line from intesection point to bend point
+    var direction2 = this.getLineDirection(intersectionPoint, bendPoint);
+    
+    //If the difference is not -2 and not 6 then the direction of the distance is negative
+    if(direction1 - direction2 != -2 && direction1 - direction2 != 6){
+      distance = -distance;
+    }
 //    if(weight < 0.1) weight = 0.05;
 //    if(weight > 0.9) weight = 0.95;
     return {
