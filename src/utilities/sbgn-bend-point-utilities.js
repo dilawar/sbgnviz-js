@@ -57,10 +57,12 @@ var sbgnBendPointUtilities = {
   getClippingPointsAndTangents: function (edge) {
     var sourceNode = edge.source();
     var targetNode = edge.target();
-    var srcClippingPoint = this.getClippingPoint(sourceNode, targetNode.position('x')
-        , targetNode.position('y'));
-    var tgtClippingPoint = this.getClippingPoint(targetNode, sourceNode.position('x')
-        , sourceNode.position('y'));
+    
+    var tgtPosition = cytoscape.sbgn.addPortReplacementIfAny(targetNode, edge._private.data.porttarget);
+    var srcPosition = cytoscape.sbgn.addPortReplacementIfAny(sourceNode, edge._private.data.portsource);
+    
+    var srcClippingPoint = this.getClippingPoint(sourceNode, tgtPosition.x, tgtPosition.y);
+    var tgtClippingPoint = this.getClippingPoint(targetNode, srcPosition.x, srcPosition.y);
 
     var m1 = (tgtClippingPoint.y - srcClippingPoint.y) / (tgtClippingPoint.x - srcClippingPoint.x);
     var m2 = -1 / m1;
@@ -108,8 +110,8 @@ var sbgnBendPointUtilities = {
     if(direction1 - direction2 != -2 && direction1 - direction2 != 6){
       distance = -distance;
     }
-//    if(weight < 0.1) weight = 0.05;
-//    if(weight > 0.9) weight = 0.95;
+    if(weight < 0.01) weight = 0.01;
+    if(weight > 0.99) weight = 0.99;
     return {
       weight: weight,
       distance: distance
