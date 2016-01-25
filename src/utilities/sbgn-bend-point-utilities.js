@@ -84,11 +84,24 @@ var sbgnBendPointUtilities = {
     var m1 = clippingPointsAndTangents.m1;
     var m2 = clippingPointsAndTangents.m2;
 
-    var a1 = srcClippingPoint.y - m1 * srcClippingPoint.x;
-    var a2 = bendPoint.y - m2 * bendPoint.x;
+    var intersectX;
+    var intersectY;
 
-    var intersectX = (a2 - a1) / (m1 - m2);
-    var intersectY = m1 * intersectX + a1;
+    if(m1 == Infinity || m1 == -Infinity){
+      intersectX = srcClippingPoint.x;
+      intersectY = bendPoint.y;
+    }
+    else if(m1 == 0){
+      intersectX = bendPoint.x;
+      intersectY = srcClippingPoint.y;
+    }
+    else {
+      var a1 = srcClippingPoint.y - m1 * srcClippingPoint.x;
+      var a2 = bendPoint.y - m2 * bendPoint.x;
+
+      intersectX = (a2 - a1) / (m1 - m2);
+      intersectY = m1 * intersectX + a1;
+    }
 
     //Intersection point is the intersection of the lines passing through the nodes and
     //passing through the bend point and perpendicular to the other line
@@ -97,7 +110,7 @@ var sbgnBendPointUtilities = {
       y: intersectY
     };
 
-    var weight = (intersectX - srcClippingPoint.x) / (tgtClippingPoint.x - srcClippingPoint.x);
+    var weight = intersectX == srcClippingPoint.x?0:(intersectX - srcClippingPoint.x) / (tgtClippingPoint.x - srcClippingPoint.x);
     var distance = Math.sqrt(Math.pow((intersectY - bendPoint.y), 2)
         + Math.pow((intersectX - bendPoint.x), 2));
     
@@ -110,8 +123,10 @@ var sbgnBendPointUtilities = {
     if(direction1 - direction2 != -2 && direction1 - direction2 != 6){
       distance = -distance;
     }
+    
     if(weight < 0.01) weight = 0.01;
     if(weight > 0.99) weight = 0.99;
+    
     return {
       weight: weight,
       distance: distance
@@ -145,7 +160,7 @@ var sbgnBendPointUtilities = {
     for (var i = 0; i < distances.length; i++) {
       str = str + " " + distances[i];
     }
-//    console.log(str);
+    
     return str;
   },
   getSegmentWeightsString: function (edge) {
@@ -155,7 +170,7 @@ var sbgnBendPointUtilities = {
     for (var i = 0; i < weights.length; i++) {
       str = str + " " + weights[i];
     }
-//    console.log(str);
+    
     return str;
   }
 };
