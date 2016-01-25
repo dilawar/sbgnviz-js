@@ -640,8 +640,9 @@
             </td>
 
             <td>
-            <input id="compound-padding" type="text" class="input-small layout-text" value= <%= compoundPadding %> > %
+            <input id="compound-padding" type="text" class="input-small layout-text" value= <%= compoundPadding %> > 
             </td>
+            <td>%</td>
             </tr>
 
             <tr>
@@ -650,7 +651,7 @@
             </td>
 
             <td>
-            <select name="dynamic-label-size">
+            <select id="dynamic-label-size-select" name="dynamic-label-size">
             <option id="dynamic-label-size_small" value="small" <% if (dynamicLabelSize == 'small'){ %> selected<%}%> > Small </option>
             <option id="dynamic-label-size_regular" value="regular" <% if (dynamicLabelSize == 'regular'){ %> selected<%}%> > Regular </option>
             <option id="dynamic-label-size_large" value="large" <% if (dynamicLabelSize == 'large'){ %> selected<%}%> > Large </option>

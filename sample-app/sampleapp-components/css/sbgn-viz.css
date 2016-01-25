@@ -380,3 +380,19 @@ button {
 .ui-widget button {
     font-size: 12px;
 }
+
+option {
+    font-size: 12px;
+}
+
+#sbgn-properties-template td {
+    width: 100%;
+}
+
+td {
+    font-size: 12px;
+}
+
+#dynamic-label-size-select {
+    width: 100%;
+}
