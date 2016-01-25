@@ -50,8 +50,8 @@
       for (var i = 0; i < node._private.data.ports.length; i++) {
         var port = node._private.data.ports[i];
         if (port.id == edgePort) {
-          posX = posX + port.x;
-          posY = posY + port.y;
+          posX = posX + port.x * node.width() / 100;
+          posY = posY + port.y * node.height() / 100;
           break;
         }
       }
@@ -69,8 +69,8 @@
 
     for (var i = 0; i < node._private.data.ports.length; i++) {
       var port = node._private.data.ports[i];
-      var portX = port.x + centerX;
-      var portY = port.y + centerY;
+      var portX = port.x * width / 100 + centerX;
+      var portY = port.y * height / 100 + centerY;
       var closestPoint = window.cyMath.polygonIntersectLine(portX, portY,
               points, centerX, centerY, width / 2, height / 2, padding);
       context.beginPath();
@@ -681,8 +681,8 @@
 
     for (var i = 0; i < node._private.data.ports.length; i++) {
       var port = node._private.data.ports[i];
-      var portX = port.x + centerX;
-      var portY = port.y + centerY;
+      var portX = port.x * width / 100 + centerX;
+      var portY = port.y * height / 100 + centerY;
       var closestPoint = window.cyMath.intersectLineEllipse(
               portX, portY, centerX, centerY, width / 2, height / 2);
       context.moveTo(portX, portY);
@@ -1643,7 +1643,7 @@
       var port = node._private.data.ports[i];
       if (portId == port.id) {
         return window.cyMath.intersectLineEllipse(
-                x, y, port.x + nodeX, port.y + nodeY, 1, 1);
+                x, y, port.x * width / 100 + nodeX, port.y * height / 100 + nodeY, 1, 1);
       }
     }
     return [];

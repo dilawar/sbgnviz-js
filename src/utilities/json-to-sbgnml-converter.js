@@ -182,8 +182,8 @@ var jsonToSbgnml = {
 
         var ports = node._private.data.ports;
         for(var i = 0 ; i < ports.length ; i++){
-            var x = node._private.position.x + ports[i].x;
-            var y = node._private.position.y + ports[i].y;
+            var x = node._private.position.x + ports[i].x * node.width() / 100;
+            var y = node._private.position.y + ports[i].y * node.height() / 100;
 
             sbgnmlText = sbgnmlText + "<port id='" + ports[i].id + 
                 "' y='" + y + "' x='" + x + "' />\n";

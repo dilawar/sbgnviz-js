@@ -177,7 +177,10 @@ var sbgnmlToJson = {
       var id = $(this).attr('id');
       var relativeXPos = parseFloat($(this).attr('x')) - nodeObj.sbgnbbox.x;
       var relativeYPos = parseFloat($(this).attr('y')) - nodeObj.sbgnbbox.y;
-
+      
+      relativeXPos = relativeXPos / parseFloat(nodeObj.sbgnbbox.w) * 100;
+      relativeYPos = relativeYPos / parseFloat(nodeObj.sbgnbbox.h) * 100;
+      
       ports.push({
         id: $(this).attr('id'),
         x: relativeXPos,
