@@ -25,7 +25,7 @@ var sbgnBendPointUtilities = {
     return 8;//if srcPoint.y > tgtPoint.y and srcPoint.x < tgtPoint.x
   },
   //Get the clipping point of the node if it has an edge between another node centered on (x, y) point
-  getClippingPoint: function (node, x, y) {
+  getClippingPoint: function (node, x, y, portid) {
     var intersect;//The return value of intersectLine function
     var shape = node.css('shape');//get the node shape
     
@@ -36,7 +36,7 @@ var sbgnBendPointUtilities = {
    
     //Determine the parameters according to the possible number of parameters
     if (window.cyNodeShapes[shape].intersectLine.length == 4) {
-      intersect = window.cyNodeShapes[shape].intersectLine(node, x, y);
+      intersect = window.cyNodeShapes[shape].intersectLine(node, x, y, portid);
     }
     else {
       intersect = window.cyNodeShapes[shape].intersectLine(
@@ -61,8 +61,27 @@ var sbgnBendPointUtilities = {
     var tgtPosition = cytoscape.sbgn.addPortReplacementIfAny(targetNode, edge._private.data.porttarget);
     var srcPosition = cytoscape.sbgn.addPortReplacementIfAny(sourceNode, edge._private.data.portsource);
     
-    var srcClippingPoint = this.getClippingPoint(sourceNode, tgtPosition.x, tgtPosition.y);
-    var tgtClippingPoint = this.getClippingPoint(targetNode, srcPosition.x, srcPosition.y);
+    var srcClippingPoint = this.getClippingPoint(sourceNode, tgtPosition.x, tgtPosition.y, edge._private.data.portsource);
+    var tgtClippingPoint = this.getClippingPoint(targetNode, srcPosition.x, srcPosition.y, edge._private.data.porttarget);
+
+//    var startPoint = edge.data('startPosition');
+//    var endPoint = edge.data('endPosition');
+//    
+//    if(startPoint.x != srcClippingPoint.x){
+//      console.log('different start point x');
+//    }
+//    
+//    if(startPoint.y != srcClippingPoint.y){
+//      console.log('different start point y');
+//    }
+//    
+//    if(endPoint.x != tgtClippingPoint.x){
+//      console.log('different end point x');
+//    }
+//    
+//    if(endPoint.y != tgtClippingPoint.y){
+//      console.log('different end point y');
+//    }
 
     var m1 = (tgtClippingPoint.y - srcClippingPoint.y) / (tgtClippingPoint.x - srcClippingPoint.x);
     var m2 = -1 / m1;
@@ -124,8 +143,8 @@ var sbgnBendPointUtilities = {
       distance = -distance;
     }
     
-    if(weight < 0.01) weight = 0.01;
-    if(weight > 0.99) weight = 0.99;
+//    if(weight < 0.001) weight = 0.00001;
+//    if(weight > 0.999) weight = 0.99999;
     
     return {
       weight: weight,

@@ -1239,8 +1239,11 @@ var SBGNContainer = Backbone.View.extend({
         for (var i = 0; i < edges.length; i++) {
           var edge = edges[i];
           var result = sbgnBendPointUtilities.convertToRelativeBendPositions(edge);
-          edge.data('weights', result.weights);
-          edge.data('distances', result.distances);
+          
+          if(result.distances.length > 0){
+            edge.data('weights', result.weights);
+            edge.data('distances', result.distances);
+          }
         }
 
         refreshPaddings();
@@ -1482,6 +1485,15 @@ var SBGNContainer = Backbone.View.extend({
           this.mouseover = false;           //make preset layout to redraw the nodes
           cy.forceRender();
         });
+
+//        cy.on('cxttap', 'edge', function (event) {
+//          var edge = this;
+//          
+//          var cyPosX = event.cyPosition.x;
+//          var cyPosY = event.cyPosition.y;
+//          
+//          console.log("edge cxttap at " + cyPosX + "\t" + cyPosY);
+//        });
 
         cy.on('cxttap', 'node', function (event) {
           var node = this;
