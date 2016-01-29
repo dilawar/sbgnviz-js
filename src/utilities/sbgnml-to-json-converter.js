@@ -265,28 +265,6 @@ var sbgnmlToJson = {
     
     return bendPointPositions;
   },
-  getArcStartPosition: function (ele) {
-    var startX = $(ele).children('start').attr('x');
-    var startY = $(ele).children('start').attr('y');
-    
-    var startPos = {
-      x: startX,
-      y: startY
-    };
-    
-    return startPos;
-  },
-  getArcEndPosition: function (ele) {
-    var endX = $(ele).children('end').attr('x');
-    var endY = $(ele).children('end').attr('y');
-    
-    var endPos = {
-      x: endX,
-      y: endY
-    };
-    
-    return endPos;
-  },
   addCytoscapeJsEdge: function (ele, jsonArray, xmlObject) {
     if (!sbgnElementUtilities.handledElements[$(ele).attr('class')]) {
       return;
@@ -301,14 +279,10 @@ var sbgnmlToJson = {
     
     var edgeObj = new Object();
     var bendPointPositions = self.getArcBendPointPositions(ele);
-    var startPos = self.getArcStartPosition(ele);
-    var endPos = self.getArcEndPosition(ele);
 
     edgeObj.id = $(ele).attr('id');
     edgeObj.sbgnclass = $(ele).attr('class');
     edgeObj.bendPointPositions = bendPointPositions;
-    edgeObj.startPosition = startPos;
-    edgeObj.endPosition = endPos;
 
     if ($(ele).find('glyph').length <= 0) {
       edgeObj.sbgncardinality = 0;

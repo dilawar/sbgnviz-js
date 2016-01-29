@@ -64,25 +64,6 @@ var sbgnBendPointUtilities = {
     var srcClippingPoint = this.getClippingPoint(sourceNode, tgtPosition.x, tgtPosition.y, edge._private.data.portsource);
     var tgtClippingPoint = this.getClippingPoint(targetNode, srcPosition.x, srcPosition.y, edge._private.data.porttarget);
 
-//    var startPoint = edge.data('startPosition');
-//    var endPoint = edge.data('endPosition');
-//    
-//    if(startPoint.x != srcClippingPoint.x){
-//      console.log('different start point x');
-//    }
-//    
-//    if(startPoint.y != srcClippingPoint.y){
-//      console.log('different start point y');
-//    }
-//    
-//    if(endPoint.x != tgtClippingPoint.x){
-//      console.log('different end point x');
-//    }
-//    
-//    if(endPoint.y != tgtClippingPoint.y){
-//      console.log('different end point y');
-//    }
-
     var m1 = (tgtClippingPoint.y - srcClippingPoint.y) / (tgtClippingPoint.x - srcClippingPoint.x);
     var m2 = -1 / m1;
 
