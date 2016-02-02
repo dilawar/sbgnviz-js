@@ -35,7 +35,7 @@ var jsonToSbgnml = {
 
             if(node.parent().isParent()){
                 var parent = node.parent();
-                sbgnmlText = sbgnmlText + " compartmentRef='" + node._private.data.id + "'";
+                sbgnmlText = sbgnmlText + " compartmentRef='" + node._private.data.parent + "'";
             }
 
             sbgnmlText = sbgnmlText + " >\n";
