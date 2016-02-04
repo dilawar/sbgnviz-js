@@ -6,6 +6,21 @@ var setFileContent = function (fileName) {
   span.appendChild(document.createTextNode(fileName));
 };
 
+var beforePerformLayout = function(){
+  cy.nodes().removeData("ports");
+  cy.edges().removeData("portsource");
+  cy.edges().removeData("porttarget");
+
+  cy.nodes().data("ports", []);
+  cy.edges().data("portsource", []);
+  cy.edges().data("porttarget", []);
+
+  cy.edges().removeData('weights');
+  cy.edges().removeData('distances');
+  
+  cy.edges().css('curve-style', 'bezier');
+};
+
 //Handle keyboard events
 $(document).keydown(function (e) {
   if (e.ctrlKey) {
@@ -799,13 +814,7 @@ $(document).ready(function () {
   $("#perform-layout").click(function (e) {
     var nodesData = getNodesData();
 
-    cy.nodes().removeData("ports");
-    cy.edges().removeData("portsource");
-    cy.edges().removeData("porttarget");
-
-    cy.nodes().data("ports", []);
-    cy.edges().data("portsource", []);
-    cy.edges().data("porttarget", []);
+    beforePerformLayout();
 
     sbgnLayoutProp.applyLayout();
     nodesData.firstTime = true;
@@ -815,14 +824,7 @@ $(document).ready(function () {
   });
 
   $("#perform-incremental-layout").click(function (e) {
-    cy.nodes().removeData("ports");
-    cy.edges().removeData("portsource");
-    cy.edges().removeData("porttarget");
-
-    cy.nodes().data("ports", []);
-    cy.edges().data("portsource", []);
-    cy.edges().data("porttarget", []);
-
+    beforePerformLayout();
     sbgnLayoutProp.applyIncrementalLayout();
   });
 
