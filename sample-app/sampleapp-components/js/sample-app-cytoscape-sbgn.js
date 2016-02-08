@@ -1486,14 +1486,36 @@ var SBGNContainer = Backbone.View.extend({
           cy.forceRender();
         });
 
-//        cy.on('cxttap', 'edge', function (event) {
-//          var edge = this;
-//          
-//          var cyPosX = event.cyPosition.x;
-//          var cyPosY = event.cyPosition.y;
-//          
-//          console.log("edge cxttap at " + cyPosX + "\t" + cyPosY);
-//        });
+        cy.on('cxttap', 'edge', function (event) {
+          var edge = this;
+          
+          var cyPosX = event.cyPosition.x;
+          var cyPosY = event.cyPosition.y;
+          
+          console.log("edge cxttap at " + cyPosX + "\t" + cyPosY);
+        });
+        
+        cy.on('tap', 'edge', function (event) {
+//          cy.panningEnabled(false);
+          var edge = this;
+          var cyPosX = event.cyPosition.x;
+          var cyPosY = event.cyPosition.y;
+
+          if(edge._private.selected){
+            var segpts = edge._private.rscratch.segpts;
+            var radius = cytoscape.sbgn.getBendCirclesRadius(edge);
+
+            for(var i = 0; segpts && i < segpts.length; i = i + 2){
+              var bendX = segpts[i];
+              var bendY = segpts[i + 1];
+
+              var inside = cytoscape.sbgn.checkIfInsideBendCircle(cyPosX, cyPosY, radius, bendX, bendY);
+              if(inside){
+                console.log('inside');
+              }
+            }
+          }
+        });
 
         cy.on('cxttap', 'node', function (event) {
           var node = this;

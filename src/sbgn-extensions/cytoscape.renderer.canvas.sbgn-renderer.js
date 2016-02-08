@@ -43,6 +43,34 @@
     $$.sbgn.drawText(context, textProp, false);
   };
 
+  $$.sbgn.fillBendCircles = function(edge, context){
+    var segpts = edge._private.rscratch.segpts;
+    var radius = $$.sbgn.getBendCirclesRadius(edge);
+    
+    for(var i = 0; segpts && i < segpts.length; i = i + 2){
+      var bendX = segpts[i];
+      var bendY = segpts[i + 1];
+
+      $$.sbgn.fillBendCircle(bendX, bendY, radius, context);
+    }
+  };
+  
+  $$.sbgn.fillBendCircle = function(bendX, bendY, radius, context){
+    $$.sbgn.drawEllipse(context, bendX, bendY, radius, radius);
+    context.fill();
+  };
+  
+  $$.sbgn.getBendCirclesRadius = function(edge){
+    var radius = parseFloat(edge.css('width')) * 1.5;
+    return radius;
+  };
+  
+  $$.sbgn.checkIfInsideBendCircle = function(x, y, radius, centerX, centerY){
+    return window.cyNodeShapes["ellipse"].checkPoint(x, y,
+                0, radius, radius,
+                centerX, centerY);
+  };
+
   $$.sbgn.addPortReplacementIfAny = function (node, edgePort) {
     var posX = node.position().x;
     var posY = node.position().y;
