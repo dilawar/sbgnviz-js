@@ -63,6 +63,10 @@ $(document).ready(function () {
       event.preventDefault();
   },false);
 
+  $('.ctx-bend-operation').click(function (e) {
+    $('#edge-ctx-menu').css('display', 'none');
+  });
+
   $('#ctx-add-bend-point').click(function (e) {
     sbgnBendPointUtilities.addBendPoint();
   });
