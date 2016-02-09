@@ -1516,17 +1516,53 @@ var SBGNContainer = Backbone.View.extend({
           sbgnBendPointUtilities.currentCtxEdge = edge;
         });
         
-        cy.on('tap', 'edge', function (event) {
-//          cy.panningEnabled(false);
+        var movedBendIndex;
+        var movedBendEdge;
+        
+        cy.on('tapstart', 'edge', function (event) {
           var edge = this;
+          movedBendEdge = edge;
+          
           var cyPosX = event.cyPosition.x;
           var cyPosY = event.cyPosition.y;
 
           if(edge._private.selected){
-            if(cytoscape.sbgn.getContainingBendCircleIndex(cyPosX, cyPosY, edge) != -1){
+            var index = cytoscape.sbgn.getContainingBendCircleIndex(cyPosX, cyPosY, edge);
+            if(index != -1){
+              movedBendIndex = index;
+              cy.panningEnabled(false);
+              cy.boxSelectionEnabled(false);
               console.log('inside');
             }
           }
+        });
+        
+        cy.on('tapdrag', function (event) {
+          if(movedBendIndex === undefined){
+            return;
+          }
+          
+          var edge = movedBendEdge;
+          
+//          var cyPosX = event.cyPosition.x;
+//          var cyPosY = event.cyPosition.y;
+          
+          var weights = edge.data('weights');
+          var distances = edge.data('distances');
+          
+          var relativeBendPosition = sbgnBendPointUtilities.convertToRelativeBendPosition(edge, event.cyPosition);
+          weights[movedBendIndex] = relativeBendPosition.weight;
+          distances[movedBendIndex] = relativeBendPosition.distance;
+          
+          edge.data('weights', weights);
+          edge.data('distances', distances);
+        });
+        
+        cy.on('tapend', 'edge', function (event) {
+          movedBendIndex = undefined;
+          movedBendEdge = undefined;
+          cy.panningEnabled(true);
+          cy.boxSelectionEnabled(true)
         });
 
         cy.on('cxttap', 'node', function (event) {
