@@ -1501,8 +1501,19 @@ var SBGNContainer = Backbone.View.extend({
           ctxMenu.style.left = left;
           ctxMenu.style.top = top;
           
+          $('.ctx-bend-operation').css('display', 'none');
+          
+          var selectedBendIndex = cytoscape.sbgn.getContainingBendCircleIndex(event.cyPosition.x, event.cyPosition.y, edge);
+          if(selectedBendIndex == -1){
+            $('#ctx-add-bend-point').css('display', 'block');
+            sbgnBendPointUtilities.currentCtxPos = event.cyPosition;
+          }
+          else {
+            $('#ctx-remove-bend-point').css('display', 'block');
+            sbgnBendPointUtilities.currentBendIndex = selectedBendIndex;
+          }
+          
           sbgnBendPointUtilities.currentCtxEdge = edge;
-          sbgnBendPointUtilities.currentCtxPos = event.cyPosition;
         });
         
         cy.on('tap', 'edge', function (event) {
@@ -1512,17 +1523,8 @@ var SBGNContainer = Backbone.View.extend({
           var cyPosY = event.cyPosition.y;
 
           if(edge._private.selected){
-            var segpts = edge._private.rscratch.segpts;
-            var radius = cytoscape.sbgn.getBendCirclesRadius(edge);
-
-            for(var i = 0; segpts && i < segpts.length; i = i + 2){
-              var bendX = segpts[i];
-              var bendY = segpts[i + 1];
-
-              var inside = cytoscape.sbgn.checkIfInsideBendCircle(cyPosX, cyPosY, radius, bendX, bendY);
-              if(inside){
-                console.log('inside');
-              }
+            if(cytoscape.sbgn.getContainingBendCircleIndex(cyPosX, cyPosY, edge) != -1){
+              console.log('inside');
             }
           }
         });

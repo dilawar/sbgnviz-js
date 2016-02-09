@@ -1,6 +1,7 @@
 var sbgnBendPointUtilities = {
   currentCtxEdge: undefined,
   currentCtxPos: undefined,
+  currentBendIndex: undefined,
   //Get the direction of the line from source point to the target point
   getLineDirection: function(srcPoint, tgtPoint){
     if(srcPoint.y == tgtPoint.y && srcPoint.x < tgtPoint.x){
@@ -208,5 +209,27 @@ var sbgnBendPointUtilities = {
     edge.data('distances', distances);
     
     return relativeBendPosition;
+  },
+  removeBendPoint: function(edge, bendPointIndex){
+    if(edge === undefined || bendPointIndex === undefined){
+      edge = this.currentCtxEdge;
+      bendPointIndex = this.currentBendIndex;
+    }
+    
+    var distances = edge.data('distances');
+    var weights = edge.data('weights');
+    
+    distances.splice(bendPointIndex, 1);
+    weights.splice(bendPointIndex, 1);
+    
+    if(distances.length == 0 || weights.lenght == 0){
+      edge.removeData('distances');
+      edge.removeData('weights');
+      edge._private.rscratch.segpts = [];
+    }
+    else {
+      edge.data('distances', distances);
+      edge.data('weights', weights);
+    }
   }
 };

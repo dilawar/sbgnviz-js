@@ -70,6 +70,23 @@
                 0, radius, radius,
                 centerX, centerY);
   };
+  
+  $$.sbgn.getContainingBendCircleIndex = function(x, y, edge) {
+    var segpts = edge._private.rscratch.segpts;
+    var radius = cytoscape.sbgn.getBendCirclesRadius(edge);
+
+    for(var i = 0; segpts && i < segpts.length; i = i + 2){
+      var bendX = segpts[i];
+      var bendY = segpts[i + 1];
+
+      var inside = cytoscape.sbgn.checkIfInsideBendCircle(x, y, radius, bendX, bendY);
+      if(inside){
+        return i;
+      }
+    }
+    
+    return -1;
+  };
 
   $$.sbgn.addPortReplacementIfAny = function (node, edgePort) {
     var posX = node.position().x;

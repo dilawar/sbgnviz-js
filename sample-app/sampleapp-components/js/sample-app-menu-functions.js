@@ -66,6 +66,10 @@ $(document).ready(function () {
   $('#ctx-add-bend-point').click(function (e) {
     sbgnBendPointUtilities.addBendPoint();
   });
+  
+  $('#ctx-remove-bend-point').click(function (e) {
+    sbgnBendPointUtilities.removeBendPoint();
+  });
 
   $('#new-file-icon').click(function (e) {
     $('#new-file').trigger("click");
