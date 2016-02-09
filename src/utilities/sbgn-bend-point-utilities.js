@@ -74,7 +74,7 @@ var sbgnBendPointUtilities = {
       tgtClippingPoint: tgtClippingPoint
     };
   },
-  convertToRelativeBendPosition: function (edge, bendPoint, clippingPointsAndTangents) {
+  getIntersection: function(edge, point, clippingPointsAndTangents){
     if (clippingPointsAndTangents === undefined) {
       clippingPointsAndTangents = this.getClippingPointsAndTangents(edge);
     }
@@ -89,15 +89,15 @@ var sbgnBendPointUtilities = {
 
     if(m1 == Infinity || m1 == -Infinity){
       intersectX = srcClippingPoint.x;
-      intersectY = bendPoint.y;
+      intersectY = point.y;
     }
     else if(m1 == 0){
-      intersectX = bendPoint.x;
+      intersectX = point.x;
       intersectY = srcClippingPoint.y;
     }
     else {
       var a1 = srcClippingPoint.y - m1 * srcClippingPoint.x;
-      var a2 = bendPoint.y - m2 * bendPoint.x;
+      var a2 = point.y - m2 * point.x;
 
       intersectX = (a2 - a1) / (m1 - m2);
       intersectY = m1 * intersectX + a1;
@@ -109,7 +109,21 @@ var sbgnBendPointUtilities = {
       x: intersectX,
       y: intersectY
     };
-
+    
+    return intersectionPoint;
+  },
+  convertToRelativeBendPosition: function (edge, bendPoint, clippingPointsAndTangents) {
+    if (clippingPointsAndTangents === undefined) {
+      clippingPointsAndTangents = this.getClippingPointsAndTangents(edge);
+    }
+    
+    var intersectionPoint = this.getIntersection(edge, bendPoint, clippingPointsAndTangents);
+    var intersectX = intersectionPoint.x;
+    var intersectY = intersectionPoint.y;
+    
+    var srcClippingPoint = clippingPointsAndTangents.srcClippingPoint;
+    var tgtClippingPoint = clippingPointsAndTangents.tgtClippingPoint;
+    
     var weight = intersectX == srcClippingPoint.x?0:(intersectX - srcClippingPoint.x) / (tgtClippingPoint.x - srcClippingPoint.x);
     var distance = Math.sqrt(Math.pow((intersectY - bendPoint.y), 2)
         + Math.pow((intersectX - bendPoint.x), 2));
@@ -123,9 +137,6 @@ var sbgnBendPointUtilities = {
     if(direction1 - direction2 != -2 && direction1 - direction2 != 6){
       distance = -distance;
     }
-    
-//    if(weight < 0.001) weight = 0.00001;
-//    if(weight > 0.999) weight = 0.99999;
     
     return {
       weight: weight,
