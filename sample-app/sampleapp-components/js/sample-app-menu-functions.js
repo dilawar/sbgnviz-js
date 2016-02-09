@@ -58,6 +58,14 @@ $(document).ready(function () {
     el: '#sbgn-network-container',
     model: {cytoscapeJsGraph: sbgnmlToJson.convert(xmlObject)}
   })).render();
+    
+  document.getElementById("edge-ctx-menu").addEventListener("contextmenu",function(event){
+      event.preventDefault();
+  },false);
+
+  $('#ctx-add-bend-point').click(function (e) {
+    sbgnBendPointUtilities.addBendPoint();
+  });
 
   $('#new-file-icon').click(function (e) {
     $('#new-file').trigger("click");

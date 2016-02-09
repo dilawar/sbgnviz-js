@@ -1488,11 +1488,21 @@ var SBGNContainer = Backbone.View.extend({
 
         cy.on('cxttap', 'edge', function (event) {
           var edge = this;
+          var containerPos = $(cy.container()).position();
           
-          var cyPosX = event.cyPosition.x;
-          var cyPosY = event.cyPosition.y;
+          var left = containerPos.left + event.cyRenderedPosition.x;
+          left = left.toString() + 'px';
           
-          console.log("edge cxttap at " + cyPosX + "\t" + cyPosY);
+          var top = containerPos.top +  event.cyRenderedPosition.y;
+          top = top.toString() + 'px';
+
+          var ctxMenu = document.getElementById("edge-ctx-menu");
+          ctxMenu.style.display = "block";
+          ctxMenu.style.left = left;
+          ctxMenu.style.top = top;
+          
+          sbgnBendPointUtilities.currentCtxEdge = edge;
+          sbgnBendPointUtilities.currentCtxPos = event.cyPosition;
         });
         
         cy.on('tap', 'edge', function (event) {
@@ -1624,8 +1634,10 @@ var SBGNContainer = Backbone.View.extend({
         });
 
         cy.on('tap', function (event) {
+          $('.ctx-menu').css('display', 'none');
           $("#node-label-textbox").blur();
           cy.nodes(":selected").length;
+          
           if (modeHandler.mode == "add-node-mode") {
             var cyPosX = event.cyPosition.x;
             var cyPosY = event.cyPosition.y;

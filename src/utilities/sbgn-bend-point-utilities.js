@@ -1,4 +1,6 @@
 var sbgnBendPointUtilities = {
+  currentCtxEdge: undefined,
+  currentCtxPos: undefined,
   //Get the direction of the line from source point to the target point
   getLineDirection: function(srcPoint, tgtPoint){
     if(srcPoint.y == tgtPoint.y && srcPoint.x < tgtPoint.x){
@@ -185,11 +187,19 @@ var sbgnBendPointUtilities = {
     return str;
   },
   addBendPoint: function(edge, newBendPoint) {
-    var relativeBendPosition = convertToRelativeBendPosition(edge, newBendPoint);
+    if(edge === undefined || newBendPoint === undefined){
+      edge = this.currentCtxEdge;
+      newBendPoint = this.currentCtxPos;
+    }
+    
+    var relativeBendPosition = this.convertToRelativeBendPosition(edge, newBendPoint);
     relativeBendPosition.distance = 0;//distance for the new bend point should be forced to 0
     
     var weights = edge.data('weights');
     var distances = edge.data('distances');
+    
+    weights = weights?weights:[];
+    distances = distances?distances:[];
     
     weights.push(relativeBendPosition.weight);
     distances.push(relativeBendPosition.distance);
