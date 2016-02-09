@@ -183,5 +183,20 @@ var sbgnBendPointUtilities = {
     }
     
     return str;
+  },
+  addBendPoint: function(edge, newBendPoint) {
+    var relativeBendPosition = convertToRelativeBendPosition(edge, newBendPoint);
+    relativeBendPosition.distance = 0;//distance for the new bend point should be forced to 0
+    
+    var weights = edge.data('weights');
+    var distances = edge.data('distances');
+    
+    weights.push(relativeBendPosition.weight);
+    distances.push(relativeBendPosition.distance);
+    
+    edge.data('weights', weights);
+    edge.data('distances', distances);
+    
+    return relativeBendPosition;
   }
 };
