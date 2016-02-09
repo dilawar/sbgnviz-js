@@ -1543,10 +1543,6 @@ var SBGNContainer = Backbone.View.extend({
           }
           
           var edge = movedBendEdge;
-          
-//          var cyPosX = event.cyPosition.x;
-//          var cyPosY = event.cyPosition.y;
-          
           var weights = edge.data('weights');
           var distances = edge.data('distances');
           
