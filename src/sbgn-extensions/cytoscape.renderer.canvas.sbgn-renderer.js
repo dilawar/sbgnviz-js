@@ -81,7 +81,7 @@
 
       var inside = cytoscape.sbgn.checkIfInsideBendCircle(x, y, radius, bendX, bendY);
       if(inside){
-        return i;
+        return i / 2;
       }
     }
     

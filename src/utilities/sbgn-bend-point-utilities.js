@@ -193,8 +193,9 @@ var sbgnBendPointUtilities = {
       newBendPoint = this.currentCtxPos;
     }
     
+    newBendPoint = this.getIntersection(edge, newBendPoint);
     var relativeBendPosition = this.convertToRelativeBendPosition(edge, newBendPoint);
-    relativeBendPosition.distance = 0;//distance for the new bend point should be forced to 0
+//    relativeBendPosition.distance = 0;//distance for the new bend point should be forced to 0
     
     var weights = edge.data('weights');
     var distances = edge.data('distances');
@@ -207,6 +208,7 @@ var sbgnBendPointUtilities = {
     
     edge.data('weights', weights);
     edge.data('distances', distances);
+    edge.css('curve-style', 'segments');
     
     return relativeBendPosition;
   },
@@ -225,7 +227,7 @@ var sbgnBendPointUtilities = {
     if(distances.length == 0 || weights.lenght == 0){
       edge.removeData('distances');
       edge.removeData('weights');
-      edge._private.rscratch.segpts = [];
+      edge.css('curve-style', 'bezier');
     }
     else {
       edge.data('distances', distances);

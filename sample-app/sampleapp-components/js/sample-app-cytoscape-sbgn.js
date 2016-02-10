@@ -1022,6 +1022,7 @@ var sbgnStyleSheet = cytoscape.stylesheet()
     })
     .selector("edge")
     .css({
+      'curve-style': 'bezier',
       'line-color': '#555',
       'target-arrow-fill': 'hollow',
       'source-arrow-fill': 'hollow',
@@ -1538,11 +1539,12 @@ var SBGNContainer = Backbone.View.extend({
         });
         
         cy.on('tapdrag', function (event) {
-          if(movedBendIndex === undefined){
+          var edge = movedBendEdge;
+          
+          if(movedBendEdge === undefined || movedBendIndex === undefined){
             return;
           }
           
-          var edge = movedBendEdge;
           var weights = edge.data('weights');
           var distances = edge.data('distances');
           
