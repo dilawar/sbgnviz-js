@@ -200,13 +200,13 @@ var sbgnBendPointUtilities = {
     var weightsWithTgtSrc = edge.data('weights');
     weightsWithTgtSrc = [0, weightsWithTgtSrc, 1];
     
-    var minDist = Math.Inf;
+    var minDist = Infinity;
     var intersection;
     var segptsWithTgtSrc = edge._private.rscratch.segpts;
     segptsWithTgtSrc = [clippingPts.srcClippingPoint.x, clippingPts.srcClippingPoint.y,
                         segptsWithTgtSrc, clippingPts.tgtClippingPoint.x, clippingPts.tgtClippingPoint.y];
     
-    for(var i = 0; i < weightsWithTgtSrc.lenght - 1; i++){
+    for(var i = 0; i < weightsWithTgtSrc.length - 1; i++){
       var w1 = weightsWithTgtSrc[i];
       var w2 = weightsWithTgtSrc[i + 1];
       
