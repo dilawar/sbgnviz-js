@@ -254,6 +254,10 @@ var sbgnBendPointUtilities = {
     }
     
     relativeBendPosition = this.convertToRelativeBendPosition(edge, newBendPoint, clippingPts);
+    
+    if(intersection === undefined){
+      relativeBendPosition.distance = 0;
+    }
 
     var weights = edge.data('weights');
     var distances = edge.data('distances');
