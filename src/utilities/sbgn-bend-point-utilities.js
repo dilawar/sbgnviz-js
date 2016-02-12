@@ -197,14 +197,13 @@ var sbgnBendPointUtilities = {
     var originalPointWeight = relativeBendPosition.weight;
     var clippingPts = this.getClippingPointsAndTangents(edge);
     
-    var weightsWithTgtSrc = edge.data('weights');
-    weightsWithTgtSrc = [0, weightsWithTgtSrc, 1];
+    var weightsWithTgtSrc = [0].concat(edge.data('weights')).concat([1]);
     
     var minDist = Infinity;
     var intersection;
-    var segptsWithTgtSrc = edge._private.rscratch.segpts;
-    segptsWithTgtSrc = [clippingPts.srcClippingPoint.x, clippingPts.srcClippingPoint.y,
-                        segptsWithTgtSrc, clippingPts.tgtClippingPoint.x, clippingPts.tgtClippingPoint.y];
+    var segptsWithTgtSrc = [clippingPts.srcClippingPoint.x, clippingPts.srcClippingPoint.y]
+            .concat(edge._private.rscratch.segpts)
+            .concat([clippingPts.tgtClippingPoint.x, clippingPts.tgtClippingPoint.y]);
     
     for(var i = 0; i < weightsWithTgtSrc.length - 1; i++){
       var w1 = weightsWithTgtSrc[i];
