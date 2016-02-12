@@ -237,13 +237,14 @@ var sbgnBendPointUtilities = {
         };
         
         //get the intersection of the current segment with the new bend point
-        intersection = this.getIntersection(edge, newBendPoint, clippingPointAndTangents);
-        var dist = Math.sqrt( Math.pow( (newBendPoint.x - intersection.x), 2 ) 
-                + Math.pow( (newBendPoint.y - intersection.y), 2 ));
+        var currentIntersection = this.getIntersection(edge, newBendPoint, clippingPointAndTangents);
+        var dist = Math.sqrt( Math.pow( (newBendPoint.x - currentIntersection.x), 2 ) 
+                + Math.pow( (newBendPoint.y - currentIntersection.y), 2 ));
         
         //Update the minimum distance
         if(dist < minDist){
           minDist = dist;
+          intersection = currentIntersection;
         }
       }
     }
