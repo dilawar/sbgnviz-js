@@ -1560,7 +1560,7 @@ var SBGNContainer = Backbone.View.extend({
           movedBendIndex = undefined;
           movedBendEdge = undefined;
           cy.panningEnabled(true);
-          cy.boxSelectionEnabled(true)
+          cy.boxSelectionEnabled(true);
         });
 
         cy.on('cxttap', 'node', function (event) {

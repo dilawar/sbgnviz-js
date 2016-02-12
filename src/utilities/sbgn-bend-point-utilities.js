@@ -193,10 +193,68 @@ var sbgnBendPointUtilities = {
       newBendPoint = this.currentCtxPos;
     }
     
-    newBendPoint = this.getIntersection(edge, newBendPoint);
     var relativeBendPosition = this.convertToRelativeBendPosition(edge, newBendPoint);
-//    relativeBendPosition.distance = 0;//distance for the new bend point should be forced to 0
+    var originalPointWeight = relativeBendPosition.weight;
+    var clippingPts = this.getClippingPointsAndTangents(edge);
     
+    var weightsWithTgtSrc = edge.data('weights');
+    weightsWithTgtSrc = [0, weightsWithTgtSrc, 1];
+    
+    var minDist = Math.Inf;
+    var intersection;
+    var segptsWithTgtSrc = edge._private.rscratch.segpts;
+    segptsWithTgtSrc = [clippingPts.srcClippingPoint.x, clippingPts.srcClippingPoint.y,
+                        segptsWithTgtSrc, clippingPts.tgtClippingPoint.x, clippingPts.tgtClippingPoint.y];
+    
+    for(var i = 0; i < weightsWithTgtSrc.lenght - 1; i++){
+      var w1 = weightsWithTgtSrc[i];
+      var w2 = weightsWithTgtSrc[i + 1];
+      
+      //check if the weight is between w1 and w2
+      if((originalPointWeight <= w1 && originalPointWeight >= w2) || (originalPointWeight <= w2 && originalPointWeight >= w1)){
+        var startX = segptsWithTgtSrc[2 * i];
+        var startY = segptsWithTgtSrc[2 * i + 1];
+        var endX = segptsWithTgtSrc[2 * i + 2];
+        var endY = segptsWithTgtSrc[2 * i + 3];
+        
+        var start = {
+          x: startX,
+          y: startY
+        };
+        
+        var end = {
+          x: endX,
+          y: endY
+        };
+        
+        var m1 = ( startY - endY ) / ( startX - endX );
+        var m2 = -1 / m1;
+        
+        var clippingPointAndTangents = {
+          srcClippingPoint: start,
+          tgtClippingPoint: end,
+          m1: m1,
+          m2: m2
+        };
+        
+        //get the intersection of the current segment with the new bend point
+        intersection = this.getIntersection(edge, newBendPoint, clippingPointAndTangents);
+        var dist = Math.sqrt( Math.pow( (newBendPoint.x - intersection.x), 2 ) 
+                + Math.pow( (newBendPoint.y - intersection.y), 2 ));
+        
+        //Update the minimum distance
+        if(dist < minDist){
+          minDist = dist;
+        }
+      }
+    }
+    
+    if(intersection !== undefined){
+      newBendPoint = intersection;
+    }
+    
+    relativeBendPosition = this.convertToRelativeBendPosition(edge, newBendPoint, clippingPts);
+
     var weights = edge.data('weights');
     var distances = edge.data('distances');
     
