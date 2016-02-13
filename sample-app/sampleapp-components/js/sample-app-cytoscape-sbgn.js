@@ -1519,10 +1519,17 @@ var SBGNContainer = Backbone.View.extend({
         
         var movedBendIndex;
         var movedBendEdge;
+        var moveBendParam;
         
         cy.on('tapstart', 'edge', function (event) {
           var edge = this;
           movedBendEdge = edge;
+          
+          moveBendParam = {
+            edge: edge,
+            weights: edge.data('weights')?[].concat(edge.data('weights')):edge.data('weights'),
+            distances: edge.data('distances')?[].concat(edge.data('distances')):edge.data('distances')
+          };
           
           var cyPosX = event.cyPosition.x;
           var cyPosY = event.cyPosition.y;
@@ -1533,7 +1540,6 @@ var SBGNContainer = Backbone.View.extend({
               movedBendIndex = index;
               cy.panningEnabled(false);
               cy.boxSelectionEnabled(false);
-              console.log('inside');
             }
           }
         });
@@ -1557,8 +1563,16 @@ var SBGNContainer = Backbone.View.extend({
         });
         
         cy.on('tapend', 'edge', function (event) {
+          var edge = movedBendEdge;
+          
+          if(moveBendParam !== undefined){
+            editorActionsManager._do(new changeBendPointsCommand(moveBendParam));
+          }
+          
           movedBendIndex = undefined;
           movedBendEdge = undefined;
+          moveBendParam = undefined;
+          
           cy.panningEnabled(true);
           cy.boxSelectionEnabled(true);
         });

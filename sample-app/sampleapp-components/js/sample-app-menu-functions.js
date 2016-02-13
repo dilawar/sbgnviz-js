@@ -68,11 +68,27 @@ $(document).ready(function () {
   });
 
   $('#ctx-add-bend-point').click(function (e) {
+    var edge = sbgnBendPointUtilities.currentCtxEdge;
+    var param = {
+      edge: edge,
+      weights: edge.data('weights')?[].concat(edge.data('weights')):edge.data('weights'),
+      distances: edge.data('distances')?[].concat(edge.data('distances')):edge.data('distances')
+    };
+    
     sbgnBendPointUtilities.addBendPoint();
+    editorActionsManager._do(new changeBendPointsCommand(param));
   });
   
   $('#ctx-remove-bend-point').click(function (e) {
+    var edge = sbgnBendPointUtilities.currentCtxEdge;
+    var param = {
+      edge: edge,
+      weights: [].concat(edge.data('weights')),
+      distances: [].concat(edge.data('distances'))
+    };
+    
     sbgnBendPointUtilities.removeBendPoint();
+    editorActionsManager._do(new changeBendPointsCommand(param));
   });
 
   $('#new-file-icon').click(function (e) {
