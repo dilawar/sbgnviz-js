@@ -427,7 +427,7 @@ menu > menu{
     position:relative;
     top:-20px;
     left:100%;
-    width:110px;
+    width:150px;
 }
 menu[title]:before{
     content:attr(title);
