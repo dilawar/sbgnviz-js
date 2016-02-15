@@ -220,6 +220,7 @@ var sbgnBendPointUtilities = {
     var segptsWithTgtSrc = [edgeStartX, edgeStartY]
             .concat(edge._private.rscratch.segpts?edge._private.rscratch.segpts:[])
             .concat([edgeEndX, edgeEndY]);
+    var newBendIndex = -1;
     
     for(var i = 0; i < weightsWithTgtSrc.length - 1; i++){
       var w1 = weightsWithTgtSrc[i];
@@ -261,6 +262,7 @@ var sbgnBendPointUtilities = {
         if(dist < minDist){
           minDist = dist;
           intersection = currentIntersection;
+          newBendIndex = i;
         }
       }
     }
@@ -281,8 +283,15 @@ var sbgnBendPointUtilities = {
     weights = weights?weights:[];
     distances = distances?distances:[];
     
-    weights.push(relativeBendPosition.weight);
-    distances.push(relativeBendPosition.distance);
+//    weights.push(relativeBendPosition.weight);
+//    distances.push(relativeBendPosition.distance);
+    if(newBendIndex != -1){
+      console.log(weights);
+      console.log(newBendIndex);
+      weights.splice(newBendIndex, 0, relativeBendPosition.weight);
+      distances.splice(newBendIndex, 0, relativeBendPosition.distance);
+      console.log(weights);
+    }
     
     edge.data('weights', weights);
     edge.data('distances', distances);
