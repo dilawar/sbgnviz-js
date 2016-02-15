@@ -66,6 +66,16 @@ var sbgnBendPointUtilities = {
     
     var srcClippingPoint = this.getClippingPoint(sourceNode, tgtPosition.x, tgtPosition.y, edge._private.data.portsource);
     var tgtClippingPoint = this.getClippingPoint(targetNode, srcPosition.x, srcPosition.y, edge._private.data.porttarget);
+    
+//    var srcClippingPoint = {
+//      x: edge._private.rscratch.startX,
+//      y: edge._private.rscratch.startY
+//    };
+//    
+//    var tgtClippingPoint = {
+//      x: edge._private.rscratch.endX,
+//      y: edge._private.rscratch.endY
+//    };
 
     var m1 = (tgtClippingPoint.y - srcClippingPoint.y) / (tgtClippingPoint.x - srcClippingPoint.x);
     var m2 = -1 / m1;
@@ -196,13 +206,20 @@ var sbgnBendPointUtilities = {
     var relativeBendPosition = this.convertToRelativeBendPosition(edge, newBendPoint);
     var originalPointWeight = relativeBendPosition.weight;
     
-    var weightsWithTgtSrc = [0].concat(edge.data('weights')?edge.data('weights'):[]).concat([1]);
+    var edgeStartX = edge._private.rscratch.startX;
+    var edgeStartY = edge._private.rscratch.startY;
+    var edgeEndX = edge._private.rscratch.endX;
+    var edgeEndY = edge._private.rscratch.endY;
+    
+    var startWeight = this.convertToRelativeBendPosition(edge, {x: edgeStartX, y: edgeStartY}).weight;
+    var endWeight = this.convertToRelativeBendPosition(edge, {x: edgeEndX, y: edgeEndY}).weight;
+    var weightsWithTgtSrc = [startWeight].concat(edge.data('weights')?edge.data('weights'):[]).concat([endWeight]);
     
     var minDist = Infinity;
     var intersection;
-    var segptsWithTgtSrc = [edge._private.rscratch.startX, edge._private.rscratch.startY]
+    var segptsWithTgtSrc = [edgeStartX, edgeStartY]
             .concat(edge._private.rscratch.segpts?edge._private.rscratch.segpts:[])
-            .concat([edge._private.rscratch.endX, edge._private.rscratch.endY]);
+            .concat([edgeEndX, edgeEndY]);
     
     for(var i = 0; i < weightsWithTgtSrc.length - 1; i++){
       var w1 = weightsWithTgtSrc[i];
