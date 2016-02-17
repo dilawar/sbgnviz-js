@@ -61,7 +61,14 @@
   };
   
   $$.sbgn.getBendCirclesRadius = function(edge){
-    var radius = parseFloat(edge.css('width')) * 4;
+    var factor;
+    if(edge._private.selected){
+      factor = 6;
+    }
+    else {
+      factor = 4;
+    }
+    var radius = parseFloat(edge.css('width')) * factor;
     return radius;
   };
   
