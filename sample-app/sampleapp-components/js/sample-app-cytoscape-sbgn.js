@@ -3,6 +3,11 @@ String.prototype.endsWith = function (suffix) {
   return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
+Array.prototype.equals = function( array ) {
+  return this.length == array.length && 
+       this.every( function(this_i,i) { return this_i == array[i] } )  
+}
+
 function dynamicResize()
 {
 
@@ -1497,10 +1502,10 @@ var SBGNContainer = Backbone.View.extend({
           var top = containerPos.top +  event.cyRenderedPosition.y;
           top = top.toString() + 'px';
 
-          var ctxMenu = document.getElementById("edge-ctx-menu");
-          ctxMenu.style.display = "block";
-          ctxMenu.style.left = left;
-          ctxMenu.style.top = top;
+//          var ctxMenu = document.getElementById("edge-ctx-menu");
+//          ctxMenu.style.display = "block";
+//          ctxMenu.style.left = left;
+//          ctxMenu.style.top = top;
           
           $('.ctx-bend-operation').css('display', 'none');
           
@@ -1508,11 +1513,17 @@ var SBGNContainer = Backbone.View.extend({
           if(selectedBendIndex == -1){
             $('#ctx-add-bend-point').css('display', 'block');
             sbgnBendPointUtilities.currentCtxPos = event.cyPosition;
+            ctxMenu = document.getElementById("ctx-add-bend-point");
           }
           else {
             $('#ctx-remove-bend-point').css('display', 'block');
             sbgnBendPointUtilities.currentBendIndex = selectedBendIndex;
+            ctxMenu = document.getElementById("ctx-remove-bend-point");
           }
+          
+          ctxMenu.style.display = "block";
+          ctxMenu.style.left = left;
+          ctxMenu.style.top = top;
           
           sbgnBendPointUtilities.currentCtxEdge = edge;
         });
@@ -1565,8 +1576,10 @@ var SBGNContainer = Backbone.View.extend({
         cy.on('tapend', 'edge', function (event) {
           var edge = movedBendEdge;
           
-          if(moveBendParam !== undefined){
+          if(moveBendParam !== undefined && edge.data('weights') 
+                  && !edge.data('weights').equals(moveBendParam.weights)){
             editorActionsManager._do(new changeBendPointsCommand(moveBendParam));
+            refreshUndoRedoButtonsStatus();
           }
           
           movedBendIndex = undefined;
@@ -1684,7 +1697,7 @@ var SBGNContainer = Backbone.View.extend({
         });
 
         cy.on('tap', function (event) {
-          $('.ctx-menu').css('display', 'none');
+          $('.ctx-bend-operation').css('display', 'none');
           $("#node-label-textbox").blur();
           cy.nodes(":selected").length;
           

@@ -59,12 +59,16 @@ $(document).ready(function () {
     model: {cytoscapeJsGraph: sbgnmlToJson.convert(xmlObject)}
   })).render();
     
-  document.getElementById("edge-ctx-menu").addEventListener("contextmenu",function(event){
+  document.getElementById("ctx-add-bend-point").addEventListener("contextmenu",function(event){
+      event.preventDefault();
+  },false);
+  
+  document.getElementById("ctx-remove-bend-point").addEventListener("contextmenu",function(event){
       event.preventDefault();
   },false);
 
   $('.ctx-bend-operation').click(function (e) {
-    $('#edge-ctx-menu').css('display', 'none');
+    $('.ctx-bend-operation').css('display', 'none');
   });
 
   $('#ctx-add-bend-point').click(function (e) {
@@ -77,6 +81,7 @@ $(document).ready(function () {
     
     sbgnBendPointUtilities.addBendPoint();
     editorActionsManager._do(new changeBendPointsCommand(param));
+    refreshUndoRedoButtonsStatus();
   });
   
   $('#ctx-remove-bend-point').click(function (e) {
@@ -89,6 +94,7 @@ $(document).ready(function () {
     
     sbgnBendPointUtilities.removeBendPoint();
     editorActionsManager._do(new changeBendPointsCommand(param));
+    refreshUndoRedoButtonsStatus();
   });
 
   $('#new-file-icon').click(function (e) {

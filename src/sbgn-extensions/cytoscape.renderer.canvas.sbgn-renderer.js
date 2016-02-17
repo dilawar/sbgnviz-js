@@ -61,7 +61,7 @@
   };
   
   $$.sbgn.getBendCirclesRadius = function(edge){
-    var radius = parseFloat(edge.css('width')) * 1.5;
+    var radius = parseFloat(edge.css('width')) * 4;
     return radius;
   };
   
@@ -72,6 +72,10 @@
   };
   
   $$.sbgn.getContainingBendCircleIndex = function(x, y, edge) {
+    if(edge.data('weights') == null || edge.data('weights').lenght == 0){
+      return -1;
+    }
+    
     var segpts = edge._private.rscratch.segpts;
     var radius = cytoscape.sbgn.getBendCirclesRadius(edge);
 

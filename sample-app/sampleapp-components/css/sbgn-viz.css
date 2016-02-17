@@ -397,10 +397,13 @@ td {
     width: 100%;
 }
 
-.ctx-menu{
+.ctx-bend-operation{
     display:none;
     z-index:1000;
+    width:110px;
+    padding: 3px 20px;
 }
+
 menu {
     position:absolute;
     display:block;
@@ -413,25 +416,22 @@ menu {
     border:1px solid;
     background-color:white;
     font-weight:normal;
+    font-size: 12px;
     white-space:nowrap;
 }
+
 menu:hover{
-    background-color:#eef;
-    font-weight:bold;
+    color: #ffffff;
+    text-decoration: none;
+    background-color: #0B9BCD;
+    background-image: none;
+    cursor: pointer;
 }
-menu:hover > menu{
-    display:block;
-}
-menu > menu{
-    display:none;
-    position:relative;
-    top:-20px;
-    left:100%;
-    width:150px;
-}
+
 menu[title]:before{
     content:attr(title);
 }
+
 menu:not([title]):before{
     content:"\2630";
 }
