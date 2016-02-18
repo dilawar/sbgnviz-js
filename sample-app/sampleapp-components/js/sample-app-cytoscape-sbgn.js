@@ -3,11 +3,6 @@ String.prototype.endsWith = function (suffix) {
   return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
-Array.prototype.equals = function( array ) {
-  return this.length == array.length && 
-       this.every( function(this_i,i) { return this_i == array[i] } )  
-}
-
 function dynamicResize()
 {
 
@@ -1577,7 +1572,7 @@ var SBGNContainer = Backbone.View.extend({
           var edge = movedBendEdge;
           
           if(moveBendParam !== undefined && edge.data('weights') 
-                  && !edge.data('weights').equals(moveBendParam.weights)){
+                  && edge.data('weights').toString() != moveBendParam.weights.toString()){
             editorActionsManager._do(new changeBendPointsCommand(moveBendParam));
             refreshUndoRedoButtonsStatus();
           }
