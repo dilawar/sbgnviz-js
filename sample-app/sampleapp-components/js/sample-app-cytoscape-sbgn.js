@@ -702,10 +702,13 @@ var refreshUndoRedoButtonsStatus = function () {
   else {
     $("#redo-last-action").parent("li").removeClass("disabled");
   }
-}
+};
 
-var refreshPaddings = function () {
-  var compoundPadding = parseInt(sbgnStyleRules['compound-padding'], 10);
+var calculateCompoundPaddings = function(compoundPadding) {
+  if(!compoundPadding){
+    compoundPadding = parseInt(sbgnStyleRules['compound-padding'], 10);
+  }
+  
   var nodes = cy.nodes();
   var total = 0;
   var numOfSimples = 0;
@@ -732,7 +735,14 @@ var refreshPaddings = function () {
   if (calc_padding < 15) {
     calc_padding = 15;
   }
+  
+  return calc_padding;
+};
 
+var refreshPaddings = function () {
+  var calc_padding = calculateCompoundPaddings();
+  
+  var nodes = cy.nodes();
   nodes.css('padding-left', 0);
   nodes.css('padding-right', 0);
   nodes.css('padding-top', 0);
@@ -1827,7 +1837,15 @@ var SBGNLayout = Backbone.View.extend({
     numIter: 2500,
     tile: true,
     animate: true,
-    randomize: true
+    randomize: true,
+    tilingVerticalPadding: function() {
+//      return 100;
+      return calculateCompoundPaddings(parseInt(sbgnStyleRules['compound-padding'], 10));
+    },
+    tilingHorizontalPadding: function() {
+//      return 100;
+      return calculateCompoundPaddings(parseInt(sbgnStyleRules['compound-padding'], 10));
+    }
   },
   currentLayoutProperties: null,
   initialize: function () {
