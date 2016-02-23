@@ -1838,11 +1838,11 @@ var SBGNLayout = Backbone.View.extend({
     tile: true,
     animate: true,
     randomize: true,
-    tilingVerticalPadding: function() {
+    tilingPaddingVertical: function() {
 //      return 100;
       return calculateCompoundPaddings(parseInt(sbgnStyleRules['compound-padding'], 10));
     },
-    tilingHorizontalPadding: function() {
+    tilingPaddingHorizontal: function() {
 //      return 100;
       return calculateCompoundPaddings(parseInt(sbgnStyleRules['compound-padding'], 10));
     }
