@@ -704,9 +704,10 @@ var refreshUndoRedoButtonsStatus = function () {
   }
 };
 
-var calculateCompoundPaddings = function(compoundPadding) {
-  if(!compoundPadding){
-    compoundPadding = parseInt(sbgnStyleRules['compound-padding'], 10);
+var calculatePaddings = function(paddingPercent) {
+  //As default use the compound padding value
+  if(!paddingPercent){
+    paddingPercent = parseInt(sbgnStyleRules['compound-padding'], 10);
   }
   
   var nodes = cy.nodes();
@@ -730,7 +731,7 @@ var calculateCompoundPaddings = function(compoundPadding) {
     }
   }
 
-  var calc_padding = (compoundPadding / 100) * Math.floor(total / (2 * numOfSimples));
+  var calc_padding = (paddingPercent / 100) * Math.floor(total / (2 * numOfSimples));
 
   if (calc_padding < 15) {
     calc_padding = 15;
@@ -738,6 +739,9 @@ var calculateCompoundPaddings = function(compoundPadding) {
   
   return calc_padding;
 };
+
+var calculateTilingPaddings = calculatePaddings;
+var calculateCompoundPaddings = calculatePaddings;
 
 var refreshPaddings = function () {
   var calc_padding = calculateCompoundPaddings();
@@ -1839,19 +1843,22 @@ var SBGNLayout = Backbone.View.extend({
     animate: true,
     randomize: true,
     tilingPaddingVertical: function() {
-//      return 100;
-      return calculateCompoundPaddings(parseInt(sbgnStyleRules['compound-padding'], 10));
+      return calculateTilingPaddings(parseInt(sbgnStyleRules['tiling-padding-vertical'], 10));
     },
     tilingPaddingHorizontal: function() {
-//      return 100;
-      return calculateCompoundPaddings(parseInt(sbgnStyleRules['compound-padding'], 10));
+      return calculateTilingPaddings(parseInt(sbgnStyleRules['tiling-padding-horizontal'], 10));
     }
   },
   currentLayoutProperties: null,
   initialize: function () {
     var self = this;
     self.copyProperties();
-    self.template = _.template($("#layout-settings-template").html(), self.currentLayoutProperties);
+    
+    var templateProperties = _.clone(self.currentLayoutProperties);
+    templateProperties.tilingPaddingVertical = sbgnStyleRules['tiling-padding-vertical'];
+    templateProperties.tilingPaddingHorizontal = sbgnStyleRules['tiling-padding-horizontal'];
+    
+    self.template = _.template($("#layout-settings-template").html(), templateProperties);
   },
   copyProperties: function () {
     this.currentLayoutProperties = _.clone(this.defaultLayoutProperties);
@@ -1870,7 +1877,12 @@ var SBGNLayout = Backbone.View.extend({
   },
   render: function () {
     var self = this;
-    self.template = _.template($("#layout-settings-template").html(), self.currentLayoutProperties);
+    
+    var templateProperties = _.clone(self.currentLayoutProperties);
+    templateProperties.tilingPaddingVertical = sbgnStyleRules['tiling-padding-vertical'];
+    templateProperties.tilingPaddingHorizontal = sbgnStyleRules['tiling-padding-horizontal'];
+    
+    self.template = _.template($("#layout-settings-template").html(), templateProperties);
     $(self.el).html(self.template);
 
     $(self.el).dialog();
@@ -1886,13 +1898,24 @@ var SBGNLayout = Backbone.View.extend({
       self.currentLayoutProperties.tile = document.getElementById("tile").checked;
       self.currentLayoutProperties.animate = document.getElementById("animate").checked;
       self.currentLayoutProperties.randomize = !document.getElementById("incremental").checked;
-
+      
+      sbgnStyleRules['tiling-padding-vertical'] = Number(document.getElementById("tiling-padding-vertical").value);
+      sbgnStyleRules['tiling-padding-horizontal'] = Number(document.getElementById("tiling-padding-horizontal").value);
+      
       $(self.el).dialog('close');
     });
 
     $("#default-layout").die("click").live("click", function (evt) {
       self.copyProperties();
-      self.template = _.template($("#layout-settings-template").html(), self.currentLayoutProperties);
+      
+      sbgnStyleRules['tiling-padding-vertical'] = defaultSbgnStyleRules['tiling-padding-vertical'];
+      sbgnStyleRules['tiling-padding-horizontal'] = defaultSbgnStyleRules['tiling-padding-horizontal'];
+      
+      var templateProperties = _.clone(self.currentLayoutProperties);
+      templateProperties.tilingPaddingVertical = sbgnStyleRules['tiling-padding-vertical'];
+      templateProperties.tilingPaddingHorizontal = sbgnStyleRules['tiling-padding-horizontal'];
+      
+      self.template = _.template($("#layout-settings-template").html(), templateProperties);
       $(self.el).html(self.template);
     });
 
