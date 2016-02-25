@@ -43,54 +43,50 @@
     $$.sbgn.drawText(context, textProp, false);
   };
 
-  $$.sbgn.fillBendCircles = function(edge, context){
+  $$.sbgn.fillBendShapes = function(edge, context){
     var segpts = edge._private.rscratch.segpts;
-    var radius = $$.sbgn.getBendCirclesRadius(edge);
+    var radius = $$.sbgn.getBendShapesLenght(edge);
     
     for(var i = 0; segpts && i < segpts.length; i = i + 2){
       var bendX = segpts[i];
       var bendY = segpts[i + 1];
 
-      $$.sbgn.fillBendCircle(bendX, bendY, radius, context);
+      $$.sbgn.fillBendShape(bendX, bendY, radius, context);
     }
   };
   
-  $$.sbgn.fillBendCircle = function(bendX, bendY, radius, context){
-    $$.sbgn.drawEllipse(context, bendX, bendY, radius, radius);
+  $$.sbgn.fillBendShape = function(bendX, bendY, length, context){
+    window.cyRenderer.drawPolygonPath(context,
+                bendX, bendY,
+                length, length,
+                window.cyNodeShapes['process'].points);
     context.fill();
   };
   
-  $$.sbgn.getBendCirclesRadius = function(edge){
-    var factor;
-    if(edge._private.selected){
-      factor = 6;
-    }
-    else {
-      factor = 4;
-    }
-    var radius = parseFloat(edge.css('width')) * factor;
-    return radius;
+  $$.sbgn.getBendShapesLenght = function(edge){
+    var factor = 6;
+    var length = parseFloat(edge.css('width')) * factor;
+    return length;
   };
   
-  $$.sbgn.checkIfInsideBendCircle = function(x, y, radius, centerX, centerY){
-    return window.cyNodeShapes["ellipse"].checkPoint(x, y,
-                0, radius, radius,
-                centerX, centerY);
+  $$.sbgn.checkIfInsideBendShape = function(x, y, length, centerX, centerY){
+    return window.cyMath.pointInsidePolygon(x, y, window.cyNodeShapes['process'].points,
+                centerX, centerY, length, length, [0, -1], 0);
   };
   
-  $$.sbgn.getContainingBendCircleIndex = function(x, y, edge) {
+  $$.sbgn.getContainingBendShapeIndex = function(x, y, edge) {
     if(edge.data('weights') == null || edge.data('weights').lenght == 0){
       return -1;
     }
     
     var segpts = edge._private.rscratch.segpts;
-    var radius = cytoscape.sbgn.getBendCirclesRadius(edge);
+    var length = cytoscape.sbgn.getBendShapesLenght(edge);
 
     for(var i = 0; segpts && i < segpts.length; i = i + 2){
       var bendX = segpts[i];
       var bendY = segpts[i + 1];
 
-      var inside = cytoscape.sbgn.checkIfInsideBendCircle(x, y, radius, bendX, bendY);
+      var inside = cytoscape.sbgn.checkIfInsideBendShape(x, y, length, bendX, bendY);
       if(inside){
         return i / 2;
       }
