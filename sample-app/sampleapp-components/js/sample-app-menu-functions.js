@@ -808,11 +808,17 @@ $(document).ready(function () {
       return;
     }
 
-    if (window.incrementalLayoutAfterExpandCollapse == null) {
+    /*alperk_if (window.incrementalLayoutAfterExpandCollapse == null) {
       window.incrementalLayoutAfterExpandCollapse =
               (sbgnStyleRules['incremental-layout-after-expand-collapse'] == 'true');
+    }*/
+      
+    if (window.fishEyeViewAfterExpandCollapse == null) {
+      window.fishEyeViewAfterExpandCollapse =
+              (sbgnStyleRules['fish-eye-view-after-expand-collapse'] == 'true');
     }
-    if (incrementalLayoutAfterExpandCollapse)
+    
+    if (fishEyeViewAfterExpandCollapse /*alperk_incrementalLayoutAfterExpandCollapse*/)
       editorActionsManager._do(new CollapseGivenNodesCommand({
         nodes: nodes,
         firstTime: true
@@ -829,12 +835,18 @@ $(document).ready(function () {
     if (!thereIs) {
       return;
     }
-
-    if (window.incrementalLayoutAfterExpandCollapse == null) {
+    
+    /*alperk_if (window.incrementalLayoutAfterExpandCollapse == null) {
       window.incrementalLayoutAfterExpandCollapse =
               (sbgnStyleRules['incremental-layout-after-expand-collapse'] == 'true');
+    }*/
+      
+    if (window.fishEyeViewAfterExpandCollapse == null) {
+      window.fishEyeViewAfterExpandCollapse =
+              (sbgnStyleRules['fish-eye-view-after-expand-collapse'] == 'true');
     }
-    if (incrementalLayoutAfterExpandCollapse)
+    
+    if (fishEyeViewAfterExpandCollapse/*alperk_incrementalLayoutAfterExpandCollapse*/)
       editorActionsManager._do(new CollapseGivenNodesCommand({
         nodes: complexes,
         firstTime: true
@@ -858,11 +870,17 @@ $(document).ready(function () {
       return;
     }
 
-    if (window.incrementalLayoutAfterExpandCollapse == null) {
+    /*alperk_if (window.incrementalLayoutAfterExpandCollapse == null) {
       window.incrementalLayoutAfterExpandCollapse =
               (sbgnStyleRules['incremental-layout-after-expand-collapse'] == 'true');
+    }*/
+    
+    if (window.fishEyeViewAfterExpandCollapse == null) {
+      window.fishEyeViewAfterExpandCollapse =
+              (sbgnStyleRules['fish-eye-view-after-expand-collapse'] == 'true');
     }
-    if (incrementalLayoutAfterExpandCollapse)
+    
+    if (fishEyeViewAfterExpandCollapse/*alperk_incrementalLayoutAfterExpandCollapse*/)
       editorActionsManager._do(new ExpandGivenNodesCommand({
         nodes: nodes,
         firstTime: true
@@ -880,11 +898,17 @@ $(document).ready(function () {
       return;
     }
 
-    if (window.incrementalLayoutAfterExpandCollapse == null) {
+    /*alperk_if (window.incrementalLayoutAfterExpandCollapse == null) {
       window.incrementalLayoutAfterExpandCollapse =
               (sbgnStyleRules['incremental-layout-after-expand-collapse'] == 'true');
+    }*/
+    
+    if (window.fishEyeViewAfterExpandCollapse == null) {
+      window.fishEyeViewAfterExpandCollapse =
+              (sbgnStyleRules['fish-eye-view-after-expand-collapse'] == 'true');
     }
-    if (incrementalLayoutAfterExpandCollapse)
+    
+    if (fishEyeViewAfterExpandCollapse/*alperk_incrementalLayoutAfterExpandCollapse*/)
       editorActionsManager._do(new ExpandAllNodesCommand({
         nodes: complexes,
         firstTime: true,
@@ -911,11 +935,17 @@ $(document).ready(function () {
       return;
     }
 
-    if (window.incrementalLayoutAfterExpandCollapse == null) {
+    /*alperk_if (window.incrementalLayoutAfterExpandCollapse == null) {
       window.incrementalLayoutAfterExpandCollapse =
               (sbgnStyleRules['incremental-layout-after-expand-collapse'] == 'true');
+    }*/
+      
+    if (window.fishEyeViewAfterExpandCollapse == null) {
+      window.fishEyeViewAfterExpandCollapse =
+              (sbgnStyleRules['fish-eye-view-after-expand-collapse'] == 'true');
     }
-    if (incrementalLayoutAfterExpandCollapse)
+    
+    if (fishEyeViewAfterExpandCollapse/*alperk_incrementalLayoutAfterExpandCollapse*/)
       editorActionsManager._do(new CollapseGivenNodesCommand({
         nodes: cy.nodes(),
         firstTime: true
@@ -932,11 +962,17 @@ $(document).ready(function () {
       return;
     }
 
-    if (window.incrementalLayoutAfterExpandCollapse == null) {
+    /*alperk_if (window.incrementalLayoutAfterExpandCollapse == null) {
       window.incrementalLayoutAfterExpandCollapse =
               (sbgnStyleRules['incremental-layout-after-expand-collapse'] == 'true');
+    }*/
+    
+    if (window.fishEyeViewAfterExpandCollapse == null) {
+      window.fishEyeViewAfterExpandCollapse =
+              (sbgnStyleRules['fish-eye-view-after-expand-collapse'] == 'true');
     }
-    if (incrementalLayoutAfterExpandCollapse)
+    
+    if (fishEyeViewAfterExpandCollapse/*alperk_incrementalLayoutAfterExpandCollapse*/)
       editorActionsManager._do(new ExpandAllNodesCommand({
         firstTime: true
       }));
