@@ -121,8 +121,9 @@ var expandCollapseUtilities = {
   //Expand the given nodes perform incremental layout after expandation
   expandGivenNodes: function (nodes) {
     this.simpleExpandGivenNodes(nodes);
-
-    $("#perform-incremental-layout").trigger("click");
+    this.fishEyeViewExpandGivenNodes(nodes);
+    
+    /*alperk_$("#perform-incremental-layout").trigger("click");*/
 
     /*
      * return the nodes to undo the operation
@@ -132,8 +133,9 @@ var expandCollapseUtilities = {
   //collapse the given nodes then make incremental layout
   collapseGivenNodes: function (nodes) {
     this.simpleCollapseGivenNodes(nodes);
-
-    $("#perform-incremental-layout").trigger("click");
+    ;
+    
+    /*alperk_$("#perform-incremental-layout").trigger("click");*/
 
     /*
      * return the nodes to undo the operation
@@ -171,8 +173,8 @@ var expandCollapseUtilities = {
   expandNode: function (node) {
     if (node._private.data.collapsedChildren != null) {
       this.simpleExpandNode(node);
-
-      $("#perform-incremental-layout").trigger("click");
+      this.fishEyeViewExpandGivenNode(node);
+      /*alperk_$("#perform-incremental-layout").trigger("click");*/
 
       /*
        * return the node to undo the operation
@@ -213,7 +215,9 @@ var expandCollapseUtilities = {
     if (node._private.data.collapsedChildren == null) {
       node.children().unselect();
       node.children().connectedEdges().unselect();
-
+      
+      node.data('width-before-collapse', node.outerWidth());
+      node.data('height-before-collapse', node.outerHeight());
       node.data('expanded-collapsed', 'collapsed');
 
       var children = node.children();
@@ -254,6 +258,76 @@ var expandCollapseUtilities = {
       return node;
     }
   },
+  
+  /*alperk_*/
+  fishEyeViewExpandGivenNodes: function (nodes) 
+  {  
+    nodes.data("expand", true);
+    
+    for (var i = 0; i < nodes.length; i++)
+    {
+        this.fishEyeViewExpandGivenNode(nodes[i]);
+    }
+    
+    return nodes;
+  },
+  
+  /*alperk_*/
+  fishEyeViewExpandGivenNode: function (node) 
+  {
+    var siblings = node.siblings();
+
+    var x_a = node.position('x');
+    var y_a = node.position('y');
+    
+    var d_x = (node.data('width-before-collapse') - isNaN(node.css('width'))?node.width():node.css('width')) / 2;
+    var d_y = (node.data('height-before-collapse') - isNaN(node.css('height'))?node.height():node.css('height')) / 2;
+    
+    window.alert("width before: " + node.data('width-before-collapse'));
+    window.alert("height before: " + node.data('height-before-collapse'));
+    
+    window.alert("d_x: " + d_x);
+    window.alert("d_y: " + d_x);
+
+    for (var i = 0; i < siblings.length; i++)
+    {
+        var sibling = siblings[i];
+
+        var x_b = sibling.position('x');
+        var y_b = sibling.position('y');
+
+        var slope = (y_b - y_a) / (x_b - x_a);
+
+        var T_x = 0;
+        var T_y = 0;
+
+        if (isFinite(slope))
+        {
+            T_x = Math.min(d_x, (d_x / Math.abs(slope)));
+
+            if (slope !== 0)
+            {
+                T_y = Math.min(d_y, (d_y * Math.abs(slope)));
+            }
+        }
+
+        if (x_a > x_b)
+        {
+            T_x = -1 * T_x;
+        }
+
+        if (y_a > y_b)
+        {
+            T_y = -1 * T_y;
+        }
+
+        node.position('x', x_b + T_x);
+        node.position('y', y_b + T_y);
+    }
+    return node;
+  },
+  /*alperk_*/
+  
   /*
    * for all children of the node parameter call this method
    * with the same root parameter,
