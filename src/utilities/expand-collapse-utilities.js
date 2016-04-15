@@ -56,6 +56,7 @@ var expandCollapseUtilities = {
     return nodes;
   },
   simpleExpandGivenNodes: function (nodes) {
+    
     nodes.data("expand", true);
     var roots = sbgnElementUtilities.getRootsOfGivenNodes(nodes);
     for (var i = 0; i < roots.length; i++) {
@@ -121,7 +122,7 @@ var expandCollapseUtilities = {
   //Expand the given nodes perform incremental layout after expandation
   expandGivenNodes: function (nodes) {
     this.simpleExpandGivenNodes(nodes);
-    this.fishEyeViewExpandGivenNodes(nodes);
+    //this.fishEyeViewExpandGivenNodes(nodes);
     
     /*alperk_$("#perform-incremental-layout").trigger("click");*/
 
@@ -173,7 +174,7 @@ var expandCollapseUtilities = {
   expandNode: function (node) {
     if (node._private.data.collapsedChildren != null) {
       this.simpleExpandNode(node);
-      this.fishEyeViewExpandGivenNode(node);
+      //this.fishEyeViewExpandGivenNode(node);
       /*alperk_$("#perform-incremental-layout").trigger("click");*/
 
       /*
@@ -190,6 +191,9 @@ var expandCollapseUtilities = {
    * used to undo the collapse operation
    */
   simpleExpandNode: function (node) {
+      
+    this.fishEyeViewExpandGivenNode(node);
+    
     if (node._private.data.collapsedChildren != null) {
       node.removeData("infoLabel");
       node.data('expanded-collapsed', 'expanded');
@@ -260,7 +264,7 @@ var expandCollapseUtilities = {
   },
   
   /*alperk_*/
-  fishEyeViewExpandGivenNodes: function (nodes) 
+  /*fishEyeViewExpandGivenNodes: function (nodes) 
   {  
     nodes.data("expand", true);
     
@@ -270,7 +274,7 @@ var expandCollapseUtilities = {
     }
     
     return nodes;
-  },
+  },*/
   
   /*alperk_*/
   fishEyeViewExpandGivenNode: function (node) 
@@ -280,14 +284,16 @@ var expandCollapseUtilities = {
     var x_a = node.position('x');
     var y_a = node.position('y');
     
-    var d_x = (node.data('width-before-collapse') - isNaN(node.css('width'))?node.width():node.css('width')) / 2;
-    var d_y = (node.data('height-before-collapse') - isNaN(node.css('height'))?node.height():node.css('height')) / 2;
+    var d_x = (node.data('width-before-collapse') - (isNaN(node.css('width'))?node.width():node.css('width'))) / 2;
+    var d_y = (node.data('height-before-collapse') - (isNaN(node.css('height'))?node.height():node.css('height'))) / 2;
     
-    window.alert("width before: " + node.data('width-before-collapse'));
+    /*window.alert("width before: " + node.data('width-before-collapse'));
     window.alert("height before: " + node.data('height-before-collapse'));
     
     window.alert("d_x: " + d_x);
-    window.alert("d_y: " + d_x);
+    window.alert("d_y: " + d_x);*/
+      
+    window.alert(siblings.length);
 
     for (var i = 0; i < siblings.length; i++)
     {
@@ -303,12 +309,14 @@ var expandCollapseUtilities = {
 
         if (isFinite(slope))
         {
-            T_x = Math.min(d_x, (d_x / Math.abs(slope)));
-
-            if (slope !== 0)
-            {
-                T_y = Math.min(d_y, (d_y * Math.abs(slope)));
-            }
+            //T_x = Math.min(d_x, (d_y / Math.abs(slope)));
+            T_x = d_x;
+        }
+        
+        if (slope !== 0)
+        {
+            //T_y = Math.min(d_y, (d_x * Math.abs(slope)));
+            T_y = d_y;
         }
 
         if (x_a > x_b)
@@ -321,8 +329,8 @@ var expandCollapseUtilities = {
             T_y = -1 * T_y;
         }
 
-        node.position('x', x_b + T_x);
-        node.position('y', y_b + T_y);
+        sibling.position('x', x_b + T_x);
+        sibling.position('y', y_b + T_y);
     }
     return node;
   },
