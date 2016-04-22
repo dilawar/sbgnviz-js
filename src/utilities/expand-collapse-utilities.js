@@ -280,27 +280,24 @@ var expandCollapseUtilities = {
   fishEyeViewExpandGivenNode: function (node) 
   {
     var siblings = node.siblings();
-
-    var x_a = node.position('x');
-    var y_a = node.position('y');
+    
+    var x_a = this.xPositionInParent(node);
+    var y_a = this.yPositionInParent(node);
     
     var d_x = (node.data('width-before-collapse') - (isNaN(node.css('width'))?node.width():node.css('width'))) / 2;
     var d_y = (node.data('height-before-collapse') - (isNaN(node.css('height'))?node.height():node.css('height'))) / 2;
-    
-    /*window.alert("width before: " + node.data('width-before-collapse'));
-    window.alert("height before: " + node.data('height-before-collapse'));
-    
-    window.alert("d_x: " + d_x);
-    window.alert("d_y: " + d_x);*/
       
-    window.alert(siblings.length);
+    //window.alert(siblings.length);
 
     for (var i = 0; i < siblings.length; i++)
     {
         var sibling = siblings[i];
-
-        var x_b = sibling.position('x');
-        var y_b = sibling.position('y');
+        
+        var sibling_width = sibling.width();
+        var sibling_height = sibling.height();
+        
+        var x_b = this.xPositionInParent(node);
+        var y_b = this.yPositionInParent(node);
 
         var slope = (y_b - y_a) / (x_b - x_a);
 
@@ -332,7 +329,54 @@ var expandCollapseUtilities = {
         sibling.position('x', x_b + T_x);
         sibling.position('y', y_b + T_y);
     }
+    
+    // Do not call the function for the root!
+    if (node.parent()[0] != null && node.parent()[0].parent()[0] != null)
+    {
+        this.fishEyeViewExpandGivenNode(node.parent()[0]);
+    }
+      
     return node;
+  },
+  
+  xPositionInParent: function (node) 
+  {
+      var parent = node.parent()[0];
+      var x_a = 0.0;
+      
+      // Given node is not a direct child of the the root graph
+      if (parent != null)
+      {
+          x_a = node.relativePosition('x') + (parent.width() / 2);
+      } 
+      // Given node is a direct child of the the root graph
+ 
+      else
+      {
+          x_a = node.position('x');
+      }
+      
+      return x_a;
+  },
+  
+  yPositionInParent: function (node) 
+  {
+      var parent = node.parent()[0];
+      var y_a = 0.0;
+      
+      // Given node is not a direct child of the the root graph
+      if (parent != null)
+      {
+          y_a = node.relativePosition('y') + (parent.height() / 2);
+      }
+      // Given node is a direct child of the the root graph
+ 
+      else
+      {
+          y_a = node.position('y');
+      }
+      
+      return y_a;
   },
   /*alperk_*/
   
