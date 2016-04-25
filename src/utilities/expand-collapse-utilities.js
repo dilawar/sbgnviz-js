@@ -296,8 +296,8 @@ var expandCollapseUtilities = {
         var sibling_width = sibling.width();
         var sibling_height = sibling.height();
         
-        var x_b = this.xPositionInParent(node);
-        var y_b = this.yPositionInParent(node);
+        var x_b = this.xPositionInParent(sibling);
+        var y_b = this.yPositionInParent(sibling);
 
         var slope = (y_b - y_a) / (x_b - x_a);
 
@@ -326,9 +326,11 @@ var expandCollapseUtilities = {
             T_y = -1 * T_y;
         }
 
-        sibling.position('x', x_b + T_x);
-        sibling.position('y', y_b + T_y);
+        sibling.position('x', sibling.position('x') + T_x);
+        sibling.position('y', sibling.position('y') + T_y);
     }
+    
+    cy.nodes().updateCompoundBounds();
     
     // Do not call the function for the root!
     if (node.parent()[0] != null && node.parent()[0].parent()[0] != null)
