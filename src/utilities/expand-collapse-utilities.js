@@ -318,22 +318,25 @@ var expandCollapseUtilities = {
 
         var d_x = (node.data('width-before-collapse') - (isNaN(node.css('width')) ? node.width() : node.css('width'))) / 2;
         var d_y = (node.data('height-before-collapse') - (isNaN(node.css('height')) ? node.height() : node.css('height'))) / 2;
-
-        //window.alert(siblings.length);
-
+        
+        var xPosInParentSibling = [];
+        var yPosInParentSibling = [];
+        
+        for (var i = 0; i < siblings.length; i++)
+        {
+            xPosInParentSibling.push(this.xPositionInParent(siblings[i]));
+            yPosInParentSibling.push(this.yPositionInParent(siblings[i]));
+        }
+        
         for (var i = 0; i < siblings.length; i++)
         {
             var sibling = siblings[i];
             
-            console.log("****************************************");
-
-            console.log("Node ID[Base]: " + siblings[i].id());
-
             var sibling_width = sibling.width();
             var sibling_height = sibling.height();
 
-            var x_b = this.xPositionInParent(sibling);
-            var y_b = this.yPositionInParent(sibling);
+            var x_b = xPosInParentSibling[i];
+            var y_b = yPosInParentSibling[i];
 
             var slope = (y_b - y_a) / (x_b - x_a);
 
@@ -364,7 +367,6 @@ var expandCollapseUtilities = {
 
             sibling.position('x', sibling.position('x') + T_x);
             sibling.position('y', sibling.position('y') + T_y);
-
         }
 
         //cy.nodes().updateCompoundBounds();
