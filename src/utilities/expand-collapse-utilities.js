@@ -294,30 +294,19 @@ var expandCollapseUtilities = {
     /*alperk_*/
     fishEyeViewExpandGivenNode: function (node)
     {
-        var siblings;
-
-        if (node.parent()[0] == null)
-        {
-            siblings = cy.collection();
-            var orphans = cy.nodes().orphans();
-            
-            for (var i = 0; i < orphans.length; i++)
-            {
-                if (orphans[i] != node)
-                {
-                    siblings = siblings.add(orphans[i]);
-                }
-            }
-        } else
-        {
-            siblings = node.siblings();
-        }
+        var siblings = this.getSiblings(node);
 
         var x_a = this.xPositionInParent(node);
         var y_a = this.yPositionInParent(node);
 
         var d_x = (node.data('width-before-collapse') - (isNaN(node.css('width')) ? node.width() : node.css('width'))) / 2;
         var d_y = (node.data('height-before-collapse') - (isNaN(node.css('height')) ? node.height() : node.css('height'))) / 2;
+        
+        console.log("Node to expand:");
+        console.log("\t[X]: " + x_a);
+        console.log("\t[Y]: " + y_a);
+        console.log("\t[DX]: " + d_x);
+        console.log("\t[DY]: " + d_y);
         
         var xPosInParentSibling = [];
         var yPosInParentSibling = [];
@@ -337,7 +326,13 @@ var expandCollapseUtilities = {
 
             var x_b = xPosInParentSibling[i];
             var y_b = yPosInParentSibling[i];
-
+            
+            console.log("Neighbor #:" + (i+1));
+            console.log("\t[X]: " + x_b);
+            console.log("\t[Y]: " + y_b);
+            console.log("\t[width]: " + sibling_width);
+            console.log("\t[height]: " + sibling_height);
+            
             var slope = (y_b - y_a) / (x_b - x_a);
 
             var T_x = 0;
@@ -345,14 +340,14 @@ var expandCollapseUtilities = {
 
             if (isFinite(slope))
             {
-                //T_x = Math.min(d_x, (d_y / Math.abs(slope)));
-                T_x = d_x;
+                T_x = Math.min(d_x, (d_y / Math.abs(slope)));
+                //T_x = d_x;
             }
 
             if (slope !== 0)
             {
-                //T_y = Math.min(d_y, (d_x * Math.abs(slope)));
-                T_y = d_y;
+                T_y = Math.min(d_y, (d_x * Math.abs(slope)));
+                //T_y = d_y;
             }
 
             if (x_a > x_b)
@@ -364,21 +359,75 @@ var expandCollapseUtilities = {
             {
                 T_y = -1 * T_y;
             }
-
-            sibling.position('x', sibling.position('x') + T_x);
-            sibling.position('y', sibling.position('y') + T_y);
+            
+            console.log("\tMove from [X]: " + sibling.position('x'));
+            console.log("\tMove from [Y]: " + sibling.position('y'));
+            
+            console.log("\tMove on [X]: " + T_x);
+            console.log("\tMove on [Y]: " + T_y);
+            
+            this.moveNode(sibling, T_x, T_y);
+            /*sibling.position('x', sibling.position('x') + T_x);
+            sibling.position('y', sibling.position('y') + T_y);*/
+            
+            console.log("\tMove to [X]: " + sibling.position('x'));
+            console.log("\tMove to [Y]: " + sibling.position('y'));
         }
 
         //cy.nodes().updateCompoundBounds();
 
         // Do not call the function for the root!
-        if (node.parent()[0] != null && node.parent()[0].parent()[0] != null)
+        if (node.parent()[0] != null /*&& node.parent()[0].parent()[0] != null*/)
         {
-            this.fishEyeViewExpandGivenNode(node.parent()[0]);
+            //this.fishEyeViewExpandGivenNode(node.parent()[0]);
         }
 
         return node;
     },
+    
+    getSiblings: function (node)
+    {
+        var siblings;
+
+        if (node.parent()[0] == null)
+        {
+            siblings = cy.collection();
+            var orphans = cy.nodes().orphans();
+            
+            for (var i = 0; i < orphans.length; i++)
+            {
+                if (orphans[i] != node)
+                {
+                    siblings = siblings.add(orphans[i]);
+                }
+            }
+        } else
+        {
+            siblings = node.siblings();
+        }
+        
+        return siblings;
+    },
+    
+    moveNode: function (node, T_x, T_y)
+    {
+        var childrenList = node.children();
+        
+        if (childrenList.length == 0)
+        {
+            node.position('x', node.position('x') + T_x);
+            node.position('y', node.position('y') + T_y);
+        }
+        else
+        {
+            
+            for (var i=0; i < childrenList.length; i++)
+            {
+                this.moveNode(childrenList[i], T_x, T_y);
+            }
+        }
+    },
+    
     xPositionInParent: function (node)
     {
         var parent = node.parent()[0];
@@ -407,10 +456,10 @@ var expandCollapseUtilities = {
         // Given node is not a direct child of the the root graph
         if (parent != null)
         {
-            console.log("Node ID: " + node.id());
+            /*console.log("Node ID: " + node.id());
             console.log("Parent ID: " + parent.id());
             console.log("Parent.width: " + parent.width());
-            console.log("Parent.height: " + parent.height());
+            console.log("Parent.height: " + parent.height());*/
             y_a = node.relativePosition('y') + (parent.height() / 2);
         }
         // Given node is a direct child of the the root graph
