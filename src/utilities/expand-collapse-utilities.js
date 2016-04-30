@@ -294,13 +294,22 @@ var expandCollapseUtilities = {
     /*alperk_*/
     fishEyeViewExpandGivenNode: function (node)
     {
+        var parentWidthBeforeCollapse = 0;
+        var parentHeightBeforeCollapse = 0;
+        
+        if (node.parent()[0] != null)
+        {
+            parentWidthBeforeCollapse = node.parent()[0].outerWidth();
+            parentHeightBeforeCollapse = node.parent()[0].outerHeight();
+        }
+        
         var siblings = this.getSiblings(node);
 
         var x_a = this.xPositionInParent(node);
         var y_a = this.yPositionInParent(node);
 
-        var d_x = (node.data('width-before-collapse') - (isNaN(node.css('width')) ? node.width() : node.css('width'))) / 2;
-        var d_y = (node.data('height-before-collapse') - (isNaN(node.css('height')) ? node.height() : node.css('height'))) / 2;
+        var d_x = Math.abs((node.data('width-before-collapse') - (isNaN(node.css('width')) ? node.width() : node.css('width'))) / 2);
+        var d_y = Math.abs((node.data('height-before-collapse') - (isNaN(node.css('height')) ? node.height() : node.css('height'))) / 2);
         
         console.log("Node to expand:");
         console.log("\t[X]: " + x_a);
@@ -379,7 +388,9 @@ var expandCollapseUtilities = {
         // Do not call the function for the root!
         if (node.parent()[0] != null /*&& node.parent()[0].parent()[0] != null*/)
         {
-            //this.fishEyeViewExpandGivenNode(node.parent()[0]);
+            node.parent()[0].data('width-before-collapse', parentWidthBeforeCollapse);
+            node.parent()[0].data('height-before-collapse', parentHeightBeforeCollapse);
+            this.fishEyeViewExpandGivenNode(node.parent()[0]);
         }
 
         return node;
