@@ -92,7 +92,7 @@ var expandCollapseUtilities = {
     expandAllNodes: function (nodes, selector) {
         var expandedStack = this.simpleExpandAllNodes(nodes, selector);
 
-        $("#perform-incremental-layout").trigger("click");
+        /*alper_$("#perform-incremental-layout").trigger("click");*/
 
         /*
          * return the nodes to undo the operation
@@ -172,7 +172,7 @@ var expandCollapseUtilities = {
     expandNode: function (node) {
         if (node._private.data.collapsedChildren != null) {
             this.simpleExpandNode(node);
-            //this.fishEyeViewExpandGivenNode(node);
+            
             /*alperk_$("#perform-incremental-layout").trigger("click");*/
 
             /*
@@ -230,7 +230,12 @@ var expandCollapseUtilities = {
                 x: node.position().x,
                 y: node.position().y
             });
-
+            
+            node.data('width-after-collapse', 39.5);
+            node.data('height-after-collapse', 39.5);
+            
+            this.fishEyeViewCollapseGivenNode(node);
+            
             node.children().unselect();
             node.children().connectedEdges().unselect();
 
@@ -270,7 +275,7 @@ var expandCollapseUtilities = {
         if (node._private.data.collapsedChildren == null) {
             this.simpleCollapseNode(node);
 
-            $("#perform-incremental-layout").trigger("click");
+            /*alperk_$("#perform-incremental-layout").trigger("click");*/
 
             /*
              * return the node to undo the operation
@@ -308,10 +313,13 @@ var expandCollapseUtilities = {
         var x_a = this.xPositionInParent(node);
         var y_a = this.yPositionInParent(node);
 
-        var d_x = Math.abs((node.data('width-before-collapse') - (isNaN(node.css('width')) ? node.width() : node.css('width'))) / 2);
-        var d_y = Math.abs((node.data('height-before-collapse') - (isNaN(node.css('height')) ? node.height() : node.css('height'))) / 2);
+        var d_x = Math.abs((node.data('width-before-collapse') - /*(isNaN(node.css('width')) ?*/ node.outerWidth() /*: node.css('width'))*/) / 2);
+        var d_y = Math.abs((node.data('height-before-collapse') - /*(isNaN(node.css('height')) ?*/ node.outerHeight() /*: node.css('height'))*/) / 2);
         
         console.log("Node to expand:");
+        console.log("\t[Width]: " + node.outerWidth());
+        console.log("\t[Height]: " + node.outerHeight());
+        console.log("Parent Before [Width],[Height]: " + parentWidthBeforeCollapse + ", " + parentHeightBeforeCollapse);
         console.log("\t[X]: " + x_a);
         console.log("\t[Y]: " + y_a);
         console.log("\t[DX]: " + d_x);
@@ -384,12 +392,102 @@ var expandCollapseUtilities = {
         }
 
         //cy.nodes().updateCompoundBounds();
-
+        if (node.parent()[0] != null)
+        {
+            var tempWidth = node.parent()[0].outerWidth();
+            var tempHeight = node.parent()[0].outerHeight();
+            
+            console.log("Parent After [Width],[Height]: " + tempWidth + ", " + tempHeight);
+        }
+        
         // Do not call the function for the root!
         if (node.parent()[0] != null /*&& node.parent()[0].parent()[0] != null*/)
         {
             node.parent()[0].data('width-before-collapse', parentWidthBeforeCollapse);
             node.parent()[0].data('height-before-collapse', parentHeightBeforeCollapse);
+            this.fishEyeViewExpandGivenNode(node.parent()[0]);
+        }
+
+        return node;
+    },
+    
+    fishEyeViewCollapseGivenNode: function (node)
+    {
+        var parentWidthBeforeCollapse = 0;
+        var parentHeightBeforeCollapse = 0;
+        
+        if (node.parent()[0] != null)
+        {
+            parentWidthBeforeCollapse = node.parent()[0].outerWidth();
+            parentHeightBeforeCollapse = node.parent()[0].outerHeight();
+        }
+        
+        var siblings = this.getSiblings(node);
+
+        var x_a = this.xPositionInParent(node);
+        var y_a = this.yPositionInParent(node);
+
+        var d_x = -1 * Math.abs((node.outerWidth() - node.data('width-after-collapse')) / 2);
+        var d_y = -1 * Math.abs((node.outerHeight() - node.data('height-after-collapse')) / 2);
+        
+        var xPosInParentSibling = [];
+        var yPosInParentSibling = [];
+        
+        for (var i = 0; i < siblings.length; i++)
+        {
+            xPosInParentSibling.push(this.xPositionInParent(siblings[i]));
+            yPosInParentSibling.push(this.yPositionInParent(siblings[i]));
+        }
+        
+        for (var i = 0; i < siblings.length; i++)
+        {
+            var sibling = siblings[i];
+            
+            var sibling_width = sibling.width();
+            var sibling_height = sibling.height();
+
+            var x_b = xPosInParentSibling[i];
+            var y_b = yPosInParentSibling[i];
+
+            var slope = (y_b - y_a) / (x_b - x_a);
+
+            var T_x = 0;
+            var T_y = 0;
+
+            if (isFinite(slope))
+            {
+                T_x = Math.max(d_x, (d_y / Math.abs(slope)));
+                //T_x = d_x;
+            }
+
+            if (slope !== 0)
+            {
+                T_y = Math.max(d_y, (d_x * Math.abs(slope)));
+                //T_y = d_y;
+            }
+
+            if (x_a > x_b)
+            {
+                T_x = -1 * T_x;
+            }
+
+            if (y_a > y_b)
+            {
+                T_y = -1 * T_y;
+            }
+            
+            this.moveNode(sibling, T_x, T_y);
+            /*sibling.position('x', sibling.position('x') + T_x);
+            sibling.position('y', sibling.position('y') + T_y);*/
+        }
+
+        //cy.nodes().updateCompoundBounds();
+        
+        // Do not call the function for the root!
+        if (node.parent()[0] != null /*&& node.parent()[0].parent()[0] != null*/)
+        {
+            node.parent()[0].data('width-after-collapse', parentWidthBeforeCollapse);
+            node.parent()[0].data('height-after-collapse', parentHeightBeforeCollapse);
             this.fishEyeViewExpandGivenNode(node.parent()[0]);
         }
 
