@@ -488,7 +488,7 @@ var expandCollapseUtilities = {
         {
             node.parent()[0].data('width-after-collapse', parentWidthBeforeCollapse);
             node.parent()[0].data('height-after-collapse', parentHeightBeforeCollapse);
-            this.fishEyeViewExpandGivenNode(node.parent()[0]);
+            this.fishEyeViewCollapseGivenNode(node.parent()[0]);
         }
 
         return node;
