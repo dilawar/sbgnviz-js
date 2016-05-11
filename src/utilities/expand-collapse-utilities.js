@@ -92,7 +92,7 @@ var expandCollapseUtilities = {
     expandAllNodes: function (nodes, selector) {
         var expandedStack = this.simpleExpandAllNodes(nodes, selector);
 
-        /*alper_$("#perform-incremental-layout").trigger("click");*/
+        /*alperk_$("#perform-incremental-layout").trigger("click");*/
 
         /*
          * return the nodes to undo the operation
@@ -134,7 +134,7 @@ var expandCollapseUtilities = {
         this.simpleCollapseGivenNodes(nodes);
         ;
 
-        /*alperk_$("#perform-incremental-layout").trigger("click");*/
+        $("#perform-incremental-layout").trigger("click");
 
         /*
          * return the nodes to undo the operation
@@ -198,6 +198,9 @@ var expandCollapseUtilities = {
                 y: node.position('y') - node.data('position-before-collapse').y
             };
 
+            node.data('x-before-collapse', this.xPositionInParent(node));
+            node.data('y-before-collapse', this.yPositionInParent(node));
+            
             this.fishEyeViewExpandGivenNode(node);
 
             node.removeData("infoLabel");
@@ -231,16 +234,17 @@ var expandCollapseUtilities = {
                 y: node.position().y
             });
             
-            node.data('width-after-collapse', 39.5);
-            node.data('height-after-collapse', 39.5);
+            /*alperk_node.data('width-after-collapse', 39.5);
+            node.data('height-after-collapse', 39.5);*/
             
-            this.fishEyeViewCollapseGivenNode(node);
+            //this.fishEyeViewCollapseGivenNode(node);
             
             node.children().unselect();
             node.children().connectedEdges().unselect();
 
             node.data('width-before-collapse', node.outerWidth());
             node.data('height-before-collapse', node.outerHeight());
+            
             node.data('expanded-collapsed', 'collapsed');
 
             var children = node.children();
@@ -275,7 +279,7 @@ var expandCollapseUtilities = {
         if (node._private.data.collapsedChildren == null) {
             this.simpleCollapseNode(node);
 
-            /*alperk_$("#perform-incremental-layout").trigger("click");*/
+            $("#perform-incremental-layout").trigger("click");
 
             /*
              * return the node to undo the operation
@@ -299,11 +303,15 @@ var expandCollapseUtilities = {
     /*alperk_*/
     fishEyeViewExpandGivenNode: function (node)
     {
+        var xBeforeCollapse = 0;
+        var yBeforeCollapse = 0;
         var parentWidthBeforeCollapse = 0;
         var parentHeightBeforeCollapse = 0;
         
         if (node.parent()[0] != null)
         {
+            xBeforeCollapse = this.xPositionInParent(node.parent()[0]);
+            yBeforeCollapse = this.yPositionInParent(node.parent()[0]);
             parentWidthBeforeCollapse = node.parent()[0].outerWidth();
             parentHeightBeforeCollapse = node.parent()[0].outerHeight();
         }
@@ -313,17 +321,56 @@ var expandCollapseUtilities = {
         var x_a = this.xPositionInParent(node);
         var y_a = this.yPositionInParent(node);
 
-        var d_x = Math.abs((node.data('width-before-collapse') - /*(isNaN(node.css('width')) ?*/ node.outerWidth() /*: node.css('width'))*/) / 2);
-        var d_y = Math.abs((node.data('height-before-collapse') - /*(isNaN(node.css('height')) ?*/ node.outerHeight() /*: node.css('height'))*/) / 2);
+        var d_x_left = Math.abs((node.data('width-before-collapse') - node.outerWidth()) / 2);
+        var d_x_right = Math.abs((node.data('width-before-collapse') - node.outerWidth()) / 2);
+        var d_y_upper = Math.abs((node.data('height-before-collapse') - node.outerHeight()) / 2);
+        var d_y_lower = Math.abs((node.data('height-before-collapse') - node.outerHeight()) / 2);
+        
+        var abs_diff_on_x = Math.abs(node.data('x-before-collapse') - x_a);
+        var abs_diff_on_y = Math.abs(node.data('y-before-collapse') - y_a);
+        
+        // Center went to LEFT
+        if (node.data('x-before-collapse') > x_a)
+        {
+            d_x_left = d_x_left + abs_diff_on_x;
+            d_x_right = d_x_right - abs_diff_on_x;
+        }
+        // Center went to RIGHT
+        else
+        {
+            d_x_left = d_x_left - abs_diff_on_x;
+            d_x_right = d_x_right + abs_diff_on_x;
+        }
+
+        // Center went to UP
+        if (node.data('y-before-collapse') > y_a)
+        {
+            d_y_upper = d_y_upper + abs_diff_on_y;
+            d_y_lower = d_y_lower - abs_diff_on_y;
+        }
+        // Center went to DOWN
+        else
+        {
+            d_y_upper = d_y_upper - abs_diff_on_y;
+            d_y_lower = d_y_lower + abs_diff_on_y;
+        }
+        
+        //var d_x = Math.abs((node.data('width-before-collapse') - /*(isNaN(node.css('width')) ?*/ node.outerWidth() /*: node.css('width'))*/) / 2);
+        //var d_y = Math.abs((node.data('height-before-collapse') - /*(isNaN(node.css('height')) ?*/ node.outerHeight() /*: node.css('height'))*/) / 2);
         
         console.log("Node to expand:");
+        console.log("\t[x-before-collapse]: " + node.data('x-before-collapse'));
+        console.log("\t[y-before-collapse]: " + node.data('y-before-collapse'));
         console.log("\t[Width]: " + node.outerWidth());
         console.log("\t[Height]: " + node.outerHeight());
+        console.log("Parent Before [X],[Y]: " + xBeforeCollapse + ", " + yBeforeCollapse);
         console.log("Parent Before [Width],[Height]: " + parentWidthBeforeCollapse + ", " + parentHeightBeforeCollapse);
         console.log("\t[X]: " + x_a);
         console.log("\t[Y]: " + y_a);
-        console.log("\t[DX]: " + d_x);
-        console.log("\t[DY]: " + d_y);
+        console.log("\t[DX_L]: " + d_x_left);
+        console.log("\t[DX_R]: " + d_x_right);
+        console.log("\t[DY_U]: " + d_y_upper);
+        console.log("\t[DY_D]: " + d_y_lower);
         
         var xPosInParentSibling = [];
         var yPosInParentSibling = [];
@@ -352,19 +399,54 @@ var expandCollapseUtilities = {
             
             var slope = (y_b - y_a) / (x_b - x_a);
 
+            var d_x = 0;
+            var d_y = 0;
             var T_x = 0;
             var T_y = 0;
 
+            // Current sibling is on the LEFT
+            if (x_a > x_b)
+            {
+                d_x = d_x_left;
+            }
+            // Current sibling is on the RIGHT
+            else
+            {
+                d_x = d_x_right;
+            }
+            // Current sibling is on the UPPER side
+            if (y_a > y_b)
+            {
+                d_y = d_y_upper;
+            }
+            // Current sibling is on the LOWER side
+            else
+            {
+                d_y = d_y_lower;
+            }
+            
             if (isFinite(slope))
             {
-                T_x = Math.min(d_x, (d_y / Math.abs(slope)));
-                //T_x = d_x;
+                if(d_y <= 0)
+                {
+                    T_x = d_x;
+                }
+                else
+                {
+                    T_x = Math.min(d_x, (d_y / Math.abs(slope)));
+                }
             }
 
             if (slope !== 0)
             {
-                T_y = Math.min(d_y, (d_x * Math.abs(slope)));
-                //T_y = d_y;
+                if (d_x <= 0)
+                {
+                    T_y = d_y;
+                }
+                else
+                {
+                    T_y = Math.min(d_y, (d_x * Math.abs(slope)));
+                }
             }
 
             if (x_a > x_b)
@@ -377,11 +459,8 @@ var expandCollapseUtilities = {
                 T_y = -1 * T_y;
             }
             
-            console.log("\tMove from [X]: " + sibling.position('x'));
-            console.log("\tMove from [Y]: " + sibling.position('y'));
-            
-            console.log("\tMove on [X]: " + T_x);
-            console.log("\tMove on [Y]: " + T_y);
+            console.log("\tMove on [X]: " + sibling.position('x') + "+" + T_x);
+            console.log("\tMove on [Y]: " + sibling.position('y') + "+" + T_y);
             
             this.moveNode(sibling, T_x, T_y);
             /*sibling.position('x', sibling.position('x') + T_x);
@@ -394,15 +473,20 @@ var expandCollapseUtilities = {
         //cy.nodes().updateCompoundBounds();
         if (node.parent()[0] != null)
         {
+            var tempX = this.xPositionInParent(node.parent()[0]);
+            var tempY = this.yPositionInParent(node.parent()[0]);
             var tempWidth = node.parent()[0].outerWidth();
             var tempHeight = node.parent()[0].outerHeight();
             
+            console.log("Parent After [X],[Y]: " + tempX + ", " + tempY);
             console.log("Parent After [Width],[Height]: " + tempWidth + ", " + tempHeight);
         }
         
         // Do not call the function for the root!
         if (node.parent()[0] != null /*&& node.parent()[0].parent()[0] != null*/)
         {
+            node.parent()[0].data('x-before-collapse', xBeforeCollapse);
+            node.parent()[0].data('y-before-collapse', yBeforeCollapse);
             node.parent()[0].data('width-before-collapse', parentWidthBeforeCollapse);
             node.parent()[0].data('height-before-collapse', parentHeightBeforeCollapse);
             this.fishEyeViewExpandGivenNode(node.parent()[0]);
