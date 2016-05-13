@@ -174,6 +174,10 @@ var expandCollapseUtilities = {
             
             this.storeWidthHeight(node)
             this.simpleExpandNode(node);
+            
+            node.data('x-before-collapse', this.xPositionInParent(node));
+            node.data('y-before-collapse', this.yPositionInParent(node));
+            
             this.fishEyeViewExpandGivenNode(node);
             /*alperk_$("#perform-incremental-layout").trigger("click");*/
 
