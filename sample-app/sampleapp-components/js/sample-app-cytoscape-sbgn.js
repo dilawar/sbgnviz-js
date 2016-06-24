@@ -1941,7 +1941,7 @@ var SBGNContainer = Backbone.View.extend({
         });
         container.cytoscapePanzoom(panProps);
 
-        cy.nodes().on("beforeCollapse", function (event) {
+        cy.on("beforeCollapse", "node", function (event) {
           var node = this;
           //The children info of complex nodes should be shown when they are collapsed
           if (node._private.data.sbgnclass == "complex") {
@@ -1951,7 +1951,7 @@ var SBGNContainer = Backbone.View.extend({
           }
         });
         
-        cy.nodes().on("afterCollapse", function (event) {
+        cy.on("afterCollapse", "node", function (event) {
           var node = this;
           refreshPaddings();
 
@@ -1960,12 +1960,12 @@ var SBGNContainer = Backbone.View.extend({
           }
         });
         
-        cy.nodes().on("beforeExpand", function (event) {
+        cy.on("beforeExpand", "node", function (event) {
           var node = this;
           node.removeData("infoLabel");
         });
         
-        cy.nodes().on("afterExpand", function (event) {
+        cy.on("afterExpand", "node", function (event) {
           var node = this;
           cy.nodes().updateCompoundBounds();
 
