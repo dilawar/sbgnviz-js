@@ -48,9 +48,15 @@ var triggerIncrementalLayout;
 
 var getExpandCollapseOptions = function() {
   return {
-    layoutBy: sbgnStyleRules['rearrange-after-expand-collapse'] ? triggerIncrementalLayout : undefined,
-    fisheye: sbgnStyleRules['rearrange-after-expand-collapse'],
-    animate: sbgnStyleRules['animate-on-drawing-changes']
+    layoutBy: function(){
+      return triggerIncrementalLayout;
+    },
+    fisheye: function(){
+      return sbgnStyleRules['rearrange-after-expand-collapse'] === 'true';
+    },
+    animate: function(){
+      return sbgnStyleRules['animate-on-drawing-changes'] === 'true';
+    }
   };
 };
 
@@ -396,6 +402,9 @@ $(document).ready(function () {
   });
   
   triggerIncrementalLayout = function(){
+    if(sbgnStyleRules['rearrange-after-expand-collapse'] !== 'true') {
+      return;
+    }
     beforePerformLayout();
 
     var preferences = {
@@ -410,6 +419,9 @@ $(document).ready(function () {
     
     sbgnLayoutProp.applyLayout(preferences, false); // layout must not be undoable
   };
+  
+  // set layoutBy option of expand collapse extension
+  cy.setExpandCollapseOption('layoutBy', triggerIncrementalLayout);
 
   $("body").on("change", "#file-input", function (e) {
     if ($("#file-input").val() == "") {
